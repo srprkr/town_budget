@@ -127,6 +127,8 @@ const BudgetChart = ({ data, title, onSegmentClick }) => {
               top: tooltip.y + 10,
               pointerEvents: 'none',
               zIndex: 1000,
+              background: "#000000",
+              opacity: .85,
             }}
           >
             <div className="tooltip-name">{tooltip.name}</div>
