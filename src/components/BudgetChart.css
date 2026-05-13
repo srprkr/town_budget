@@ -56,3 +56,40 @@ svg:active {
   font-size: 12px;
   color: var(--text);
 }
+
+.tooltip-drill {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.7;
+  margin-left: 4px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.back-btn {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.back-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.breadcrumb-path {
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.8;
+}

@@ -1,3 +1,25 @@
+export const generalFundBreakdown = {
+  revenue: [
+    { name: "Real Estate Tax", value: 2680000 },
+    { name: "Earned Income Tax", value: 973454 },
+    { name: "RE Transfer Tax", value: 243364 },
+    { name: "Local Services Tax", value: 146018 },
+    { name: "Licenses & Permits", value: 146018 },
+    { name: "Fines & Forfeitures", value: 97345 },
+    { name: "Other Revenue", value: 581072 },
+  ],
+  expenditure: [
+    { name: "Police Department", value: 2151205 },
+    { name: "Administration", value: 806702 },
+    { name: "Public Works", value: 645362 },
+    { name: "Finance", value: 430241 },
+    { name: "Code Enforcement", value: 322681 },
+    { name: "Parks & Recreation", value: 268901 },
+    { name: "Engineering", value: 215121 },
+    { name: "Other / Misc", value: 537800 },
+  ],
+};
+
 export const budget2026 = {
   revenue: [
     { name: "General Fund", value: 4867271 },
