@@ -209,21 +209,13 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
       drillRef.current.animating = true;
       setTooltip(null);
 
-      const mid = (clickedD.startAngle + clickedD.endAngle) / 2;
       const t = d3.transition().duration(DRILL_DURATION).ease(d3.easeCubicInOut);
 
-      // Collapse all non-clicked arcs toward the clicked arc's midpoint
+      // Fade out non-clicked arcs in place
       g.selectAll('.arc').each(function(d) {
         if (d === clickedD) return;
         const grp = d3.select(this);
-        grp.select('path').transition(t).attr('opacity', 0)
-          .attrTween('d', segD => {
-            const interp = d3.interpolateObject(
-              { startAngle: segD.startAngle, endAngle: segD.endAngle },
-              { startAngle: mid, endAngle: mid }
-            );
-            return t => arc({ ...segD, ...interp(t) });
-          });
+        grp.select('path').transition(t).attr('opacity', 0);
         grp.selectAll('text').transition(t).attr('opacity', 0);
       });
 
@@ -249,7 +241,7 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
       drillRef.current.labelHistory.push(drillRef.current.currentLabel || 'All Funds');
       setBreadcrumb(prev => [...prev, clickedD.data.name]);
 
-      drawArcs(drillDownData[clickedD.data.name], { animateIn: true, depth: depth + 1, label: clickedD.data.name });
+      drawArcs(drillDownData[clickedD.data.name], { animateIn: false, depth: depth + 1, label: clickedD.data.name });
       setTimeout(() => { drillRef.current.animating = false; }, DRILL_DURATION + 60);
     }
 
@@ -297,20 +289,12 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
   return (
     <div style={{ textAlign: 'center', width: '100%' }}>
       <h2>{title}</h2>
-      {breadcrumb.length > 0 && (
-        <div className="breadcrumb">
-          <button className="back-btn" onClick={() => drillRef.current.drillBack?.()}>
-            ← Back
-          </button>
-          <span className="breadcrumb-path">{breadcrumb.join(' › ')}</span>
-        </div>
-      )}
       <div className="chart-container">
         <svg ref={svgRef} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} />
         <div className="zoom-hint">
           {breadcrumb.length === 0
             ? 'Click a fund to drill down · Scroll to zoom · Double-click to reset zoom'
-            : `Viewing: ${breadcrumb[breadcrumb.length - 1]} · Click center or ← Back to return`}
+            : `Viewing: ${breadcrumb[breadcrumb.length - 1]} · Click center to return`}
         </div>
         {tooltip && (
           <div
