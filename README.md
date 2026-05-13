@@ -1,13 +1,12 @@
 # town_budget
 
-- [] Better animations for the drill downs
+- [ x ] Better animations for the drill downs
 - [] Light/Dark theme toggle (paper theme optional)
 - [] Add remaining years (2015 - 2026)
-- [] Better UI around navigation/readability.
-  - [] Smoother (or no) animations on drill downs.
-  - [] Totals in the middle.
-  - [] Click center to go back "up" the tree
-  - [] "Responsive" view window of chart
+- [ x ] Better UI around navigation/readability.
+  - [ x ] Totals in the middle.
+  - [ x ] Click center to go back "up" the tree
+  - [ x ] "Responsive" view window of chart
 - [] Comprehenive graph showing category changes over time (year over year).
 
 
