@@ -28,15 +28,14 @@ svg:active {
 }
 
 .tooltip {
-  background: var(--accent-bg);
-  border: 1px solid var(--accent);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
   border-radius: 6px;
   padding: 10px 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow);
   font-size: 13px;
   color: var(--text-h);
   white-space: nowrap;
-  opacity: 0.95;
 }
 
 .tooltip-name {

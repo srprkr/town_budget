@@ -307,8 +307,6 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
               top: tooltip.y + 12,
               pointerEvents: 'none',
               zIndex: 1000,
-              background: '#000000',
-              opacity: 0.88,
             }}
           >
             <div className="tooltip-name">
