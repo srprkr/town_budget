@@ -10,7 +10,7 @@ const TWO_PI = Math.PI * 2;
 
 const BudgetChart = ({ data, title, drillDownData = {} }) => {
   const svgRef = useRef();
-  const drillRef = useRef({ history: [], animating: false, drillBack: null });
+  const drillRef = useRef({ history: [], labelHistory: [], animating: false, drillBack: null });
   const [breadcrumb, setBreadcrumb] = useState([]);
   const [tooltip, setTooltip] = useState(null);
 
@@ -18,6 +18,7 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
     if (!data || !svgRef.current) return;
 
     drillRef.current.history = [];
+    drillRef.current.labelHistory = [];
     drillRef.current.animating = false;
     setBreadcrumb([]);
 
@@ -45,13 +46,72 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
       );
     });
 
+    function drawCenter(label, total, drillable) {
+      g.selectAll('.center-el').remove();
+
+      const innerR = RADIUS * 0.58;
+
+      if (drillable) {
+        g.append('circle')
+          .attr('class', 'center-el')
+          .attr('r', innerR)
+          .attr('fill', 'transparent')
+          .style('cursor', 'pointer')
+          .on('click', () => drillRef.current.drillBack?.());
+      }
+
+      const labelY = drillable ? -24 : -14;
+      const totalY = drillable ? 2 : 14;
+
+      const maxChars = 18;
+      const displayLabel = label.length > maxChars ? label.substring(0, maxChars - 1) + '…' : label;
+
+      g.append('text')
+        .attr('class', 'center-el')
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('y', labelY)
+        .attr('font-size', '13px')
+        .attr('fill', 'var(--text-muted, #aaa)')
+        .attr('font-weight', '500')
+        .attr('pointer-events', 'none')
+        .text(displayLabel);
+
+      g.append('text')
+        .attr('class', 'center-el')
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('y', totalY)
+        .attr('font-size', '17px')
+        .attr('fill', 'var(--text, #fff)')
+        .attr('font-weight', 'bold')
+        .attr('pointer-events', 'none')
+        .text('$' + total.toLocaleString());
+
+      if (drillable) {
+        g.append('text')
+          .attr('class', 'center-el')
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .attr('y', 26)
+          .attr('font-size', '11px')
+          .attr('fill', 'var(--text-muted, #aaa)')
+          .attr('pointer-events', 'none')
+          .text('click to go back');
+      }
+    }
+
     function drawArcs(chartData, opts = {}) {
-      const { animateIn = false, depth = 0 } = opts;
+      const { animateIn = false, depth = 0, label = 'All Funds' } = opts;
       const color = colorScales[Math.min(depth, colorScales.length - 1)];
       const total = d3.sum(chartData, d => d.value);
       const pieData = pie(chartData.filter(d => d.value > 0));
 
       g.selectAll('.arc').remove();
+
+      drawCenter(label, total, depth > 0);
+
+      drillRef.current.currentLabel = label;
 
       const arcs = g.selectAll('.arc')
         .data(pieData)
@@ -186,9 +246,10 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
       }
 
       drillRef.current.history.push(parentData);
+      drillRef.current.labelHistory.push(drillRef.current.currentLabel || 'All Funds');
       setBreadcrumb(prev => [...prev, clickedD.data.name]);
 
-      drawArcs(drillDownData[clickedD.data.name], { animateIn: true, depth: depth + 1 });
+      drawArcs(drillDownData[clickedD.data.name], { animateIn: true, depth: depth + 1, label: clickedD.data.name });
       setTimeout(() => { drillRef.current.animating = false; }, DRILL_DURATION + 60);
     }
 
@@ -221,14 +282,15 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
       }
 
       const parentData = drillRef.current.history.pop();
+      const parentLabel = drillRef.current.labelHistory.pop() || 'All Funds';
       const depth = drillRef.current.history.length;
       setBreadcrumb(prev => prev.slice(0, -1));
 
-      drawArcs(parentData, { animateIn: true, depth });
+      drawArcs(parentData, { animateIn: true, depth, label: parentLabel });
       setTimeout(() => { drillRef.current.animating = false; }, DRILL_DURATION + 60);
     };
 
-    drawArcs(data);
+    drawArcs(data, { label: 'All Funds' });
 
   }, [data, drillDownData]);
 
@@ -244,11 +306,11 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
         </div>
       )}
       <div className="chart-container">
-        <svg ref={svgRef} width={WIDTH} height={HEIGHT} />
+        <svg ref={svgRef} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} />
         <div className="zoom-hint">
           {breadcrumb.length === 0
-            ? 'Click General Fund to drill down · Scroll to zoom · Double-click to reset'
-            : `Viewing: ${breadcrumb[breadcrumb.length - 1]} · Click ← Back to return`}
+            ? 'Click a fund to drill down · Scroll to zoom · Double-click to reset zoom'
+            : `Viewing: ${breadcrumb[breadcrumb.length - 1]} · Click center or ← Back to return`}
         </div>
         {tooltip && (
           <div

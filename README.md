@@ -1,6 +1,6 @@
 # town_budget
 
-- [] Better animations for the 
+- [] Better animations for the drill downs
 - [] Light/Dark theme toggle (paper theme optional)
 - [] Add remaining years (2015 - 2026)
 - [] Better UI around navigation/readability.
