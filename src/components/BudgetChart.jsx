@@ -34,10 +34,13 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
       d3.scaleOrdinal(d3.schemeSet2),
     ];
 
-    // Zoom
-    const zoom = d3.zoom().scaleExtent([1, 8]).on('zoom', event => {
-      g.attr('transform', event.transform.translate(WIDTH / 2, HEIGHT / 2));
-    });
+    // Zoom — filter out single-finger touch so taps reach click handlers
+    const zoom = d3.zoom()
+      .scaleExtent([1, 8])
+      .filter(event => event.type === 'wheel' || (event.touches?.length >= 2) || (event.type !== 'touchstart' && event.type !== 'touchmove' && event.type !== 'touchend'))
+      .on('zoom', event => {
+        g.attr('transform', event.transform.translate(WIDTH / 2, HEIGHT / 2));
+      });
     svg.call(zoom);
     svg.on('dblclick.zoom', () => {
       svg.transition().duration(600).call(
@@ -101,6 +104,9 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
       }
     }
 
+    let touchTimer = null;
+    let hideTimer = null;
+
     function drawArcs(chartData, opts = {}) {
       const { animateIn = false, depth = 0, label = 'All Funds' } = opts;
       const color = colorScales[Math.min(depth, colorScales.length - 1)];
@@ -147,7 +153,39 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
           d3.select(this).attr('stroke', 'var(--bg)').attr('stroke-width', 2);
           setTooltip(null);
         })
+        .on('touchstart', function(event, d) {
+          if (drillRef.current.animating) return;
+          clearTimeout(touchTimer);
+          clearTimeout(hideTimer);
+          setTooltip(null);
+          drillRef.current.longPressed = false;
+          const touch = event.changedTouches[0];
+          touchTimer = setTimeout(() => {
+            touchTimer = null;
+            drillRef.current.longPressed = true;
+            const rect = svgRef.current.getBoundingClientRect();
+            setTooltip({
+              name: d.data.name,
+              value: d.data.value.toLocaleString(),
+              percent: ((d.data.value / total) * 100).toFixed(1),
+              x: touch.clientX - rect.left,
+              y: touch.clientY - rect.top,
+              drillable: !!drillDownData[d.data.name],
+            });
+            hideTimer = setTimeout(() => setTooltip(null), 2500);
+          }, 400);
+        })
+        .on('touchmove', function() {
+          clearTimeout(touchTimer);
+          touchTimer = null;
+          drillRef.current.longPressed = false;
+        })
+        .on('touchend', function() {
+          clearTimeout(touchTimer);
+          touchTimer = null;
+        })
         .on('click', function(event, d) {
+          if (drillRef.current.longPressed) { drillRef.current.longPressed = false; return; }
           if (drillRef.current.animating || !drillDownData[d.data.name]) return;
           drillIn(d, this, chartData, depth);
         });
