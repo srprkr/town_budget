@@ -21,9 +21,8 @@ header {
   background: none;
   border: 1px solid var(--border);
   border-radius: 999px;
-  width: 36px;
-  height: 36px;
-  font-size: 16px;
+  width: 38px;
+  height: 38px;
   cursor: pointer;
   color: var(--text);
   transition: border-color 0.15s, color 0.15s;
@@ -35,6 +34,29 @@ header {
     border-color: var(--accent);
     color: var(--accent);
   }
+}
+
+.theme-toggle svg {
+  position: absolute;
+  transition: transform 0.4s ease, opacity 0.25s ease;
+}
+
+.theme-toggle.is-dark .icon-sun {
+  transform: rotate(0deg);
+  opacity: 1;
+}
+.theme-toggle.is-dark .icon-moon {
+  transform: rotate(-90deg);
+  opacity: 0;
+}
+
+.theme-toggle.is-light .icon-sun {
+  transform: rotate(90deg);
+  opacity: 0;
+}
+.theme-toggle.is-light .icon-moon {
+  transform: rotate(0deg);
+  opacity: 1;
 }
 
 header h1 {
