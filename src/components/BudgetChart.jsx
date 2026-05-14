@@ -129,17 +129,19 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
           if (drillDownData[d.data.name]) {
             d3.select(this).attr('stroke', 'white').attr('stroke-width', 3);
           }
+          const rect = svgRef.current.getBoundingClientRect();
           setTooltip({
             name: d.data.name,
             value: d.data.value.toLocaleString(),
             percent: ((d.data.value / total) * 100).toFixed(1),
-            x: event.pageX,
-            y: event.pageY,
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top,
             drillable: !!drillDownData[d.data.name],
           });
         })
         .on('mousemove', event => {
-          setTooltip(p => p ? { ...p, x: event.pageX, y: event.pageY } : null);
+          const rect = svgRef.current.getBoundingClientRect();
+          setTooltip(p => p ? { ...p, x: event.clientX - rect.left, y: event.clientY - rect.top } : null);
         })
         .on('mouseleave', function(event, d) {
           d3.select(this).attr('stroke', 'var(--bg)').attr('stroke-width', 2);
@@ -302,7 +304,7 @@ const BudgetChart = ({ data, title, drillDownData = {} }) => {
           <div
             className="tooltip"
             style={{
-              position: 'fixed',
+              position: 'absolute',
               left: tooltip.x + 12,
               top: tooltip.y + 12,
               pointerEvents: 'none',
