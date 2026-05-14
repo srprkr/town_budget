@@ -1,0 +1,24 @@
+import { useRef } from 'react';
+import { useTrendChart } from '../hooks/useTrendChart';
+import './TrendChart.css';
+
+const TrendChart = ({ values, fund, type }) => {
+  const svgRef = useRef(null);
+  useTrendChart({ svgRef, values });
+
+  return (
+    <div className="trend-wrap">
+      <p className="trend-title">
+        {fund} &mdash; {type === 'revenue' ? 'Revenue' : 'Expenditures'}
+      </p>
+      <svg
+        ref={svgRef}
+        viewBox="0 0 800 400"
+        width="100%"
+        style={{ maxWidth: 800, display: 'block' }}
+      />
+    </div>
+  );
+};
+
+export default TrendChart;

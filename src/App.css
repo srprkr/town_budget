@@ -65,6 +65,13 @@ header h1 {
   color: var(--text-h);
 }
 
+.view-nav {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
 .controls {
   display: flex;
   flex-direction: column;
