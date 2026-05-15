@@ -65,7 +65,7 @@ function App() {
             <button
               key={val}
               className={`badge ${view === val ? 'active' : ''}`}
-              onClick={() => setView(val)}
+              onClick={() => { setView(val); if (val === 'budget' && type === 'balance') setType('expenditure'); }}
             >
               {label}
             </button>
