@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { TREND_FUNDS } from '../data/trends';
 
-const TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
+const TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures'], ['balance', 'Surplus / Deficit']];
 const INITIAL_VISIBLE = 5;
 
 const TrendControls = ({ fund, type, onFundChange, onTypeChange }) => {

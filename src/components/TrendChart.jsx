@@ -9,7 +9,7 @@ const TrendChart = ({ values, fund, type, actuals = {} }) => {
   return (
     <div className="trend-wrap">
       <p className="trend-title">
-        {fund} &mdash; {type === 'revenue' ? 'Revenue' : 'Expenditures'}
+        {fund} &mdash; {type === 'revenue' ? 'Revenue' : type === 'expenditure' ? 'Expenditures' : 'Surplus / Deficit'}
       </p>
       <svg
         ref={svgRef}
