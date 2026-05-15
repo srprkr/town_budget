@@ -1,4 +1,18 @@
-import { budget2022 } from './budget2022';
+import {
+  budget2022,
+  generalFundBreakdown as gf2022,
+  capitalProjectsBreakdown as cap2022,
+  sewerFundBreakdown as sewer2022,
+  solidWasteBreakdown as solid2022,
+  policePensionBreakdown as policePension2022,
+  fireProtectionBreakdown as fireProt2022,
+  debtServiceBreakdown as debt2022,
+  fireApparatusBreakdown as fireApp2022,
+  streetLightingBreakdown as streetLight2022,
+  streetTaxBreakdown as streetTax2022,
+  stateLiquidFuelsBreakdown as liquidFuels2022,
+  nonUniformedPensionBreakdown as nonUniform2022,
+} from './budget2022';
 import {
   budget2023,
   generalFundBreakdown as gf2023,
@@ -73,8 +87,34 @@ export const budgets = {
 
 export const drillDown = {
   2022: {
-    revenue: {},
-    expenditure: {},
+    revenue: {
+      'General Fund': gf2022.revenue,
+      'Capital Projects Fund': cap2022.revenue,
+      'Sewer Fund': sewer2022.revenue,
+      'Solid Waste Fund': solid2022.revenue,
+      'Debt Service Fund': debt2022.revenue,
+      'Street Tax Fund': streetTax2022.revenue,
+      'State Liquid Fuels Fund': liquidFuels2022.revenue,
+      'Police Pension Fund': policePension2022.revenue,
+      'Non-Uniformed Pension Fund': nonUniform2022.revenue,
+      'Fire Protection Fund': fireProt2022.revenue,
+      'Fire Apparatus Fund': fireApp2022.revenue,
+      'Street Lighting Tax Fund': streetLight2022.revenue,
+    },
+    expenditure: {
+      'General Fund': gf2022.expenditure,
+      'Capital Projects Fund': cap2022.expenditure,
+      'Sewer Fund': sewer2022.expenditure,
+      'Solid Waste Fund': solid2022.expenditure,
+      'Debt Service Fund': debt2022.expenditure,
+      'Street Tax Fund': streetTax2022.expenditure,
+      'State Liquid Fuels Fund': liquidFuels2022.expenditure,
+      'Police Pension Fund': policePension2022.expenditure,
+      'Non-Uniformed Pension Fund': nonUniform2022.expenditure,
+      'Fire Protection Fund': fireProt2022.expenditure,
+      'Fire Apparatus Fund': fireApp2022.expenditure,
+      'Street Lighting Tax Fund': streetLight2022.expenditure,
+    },
   },
   2023: {
     revenue: {
