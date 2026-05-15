@@ -8,6 +8,9 @@ const H = 400;
 const IW = W - MARGIN.left - MARGIN.right;
 const IH = H - MARGIN.top - MARGIN.bottom;
 
+// Years labeled "Actual*" (year-end projections, not final audit figures)
+const YEAR_SUBS = { 2025: 'Actual*' };
+
 const fmtValue = v => {
   if (v >= 1e6) return `$${+(v / 1e6).toFixed(2)}M`;
   if (v >= 1e3) return `$${+(v / 1e3).toFixed(1)}K`;
@@ -69,25 +72,29 @@ export function useTrendChart({ svgRef, values }) {
     const line = d3.line().x(d => d.x).y(d => d.y);
     const area = d3.area().x(d => d.x).y0(IH).y1(d => d.y);
 
-    // Shaded fill under solid segment
+    // All points except last = historical (solid); last two = planned (dashed)
+    const solidPts = pts.slice(0, pts.length - 1);
+    const dashedPts = pts.slice(pts.length - 2);
+
+    // Shaded fill under historical segment
     g.append('path')
-      .datum(pts.slice(0, 2))
+      .datum(solidPts)
       .attr('d', area)
       .attr('fill', 'var(--accent)')
       .attr('opacity', 0.08);
 
-    // Solid line: 2024 → 2025
+    // Solid line: historical
     g.append('path')
-      .datum(pts.slice(0, 2))
+      .datum(solidPts)
       .attr('d', line)
       .attr('fill', 'none')
       .attr('stroke', 'var(--accent)')
       .attr('stroke-width', 2.5)
       .attr('stroke-linecap', 'round');
 
-    // Dashed line: 2025 → 2026
+    // Dashed line: planned (last segment only)
     g.append('path')
-      .datum(pts.slice(1))
+      .datum(dashedPts)
       .attr('d', line)
       .attr('fill', 'none')
       .attr('stroke', 'var(--accent)')
@@ -95,11 +102,12 @@ export function useTrendChart({ svgRef, values }) {
       .attr('stroke-dasharray', '6,5')
       .attr('stroke-linecap', 'round');
 
-    // Pct change labels on segment midpoints
-    const changes = [
-      { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2, pct: (pts[1].v - pts[0].v) / pts[0].v },
-      { x: (pts[1].x + pts[2].x) / 2, y: (pts[1].y + pts[2].y) / 2, pct: (pts[2].v - pts[1].v) / pts[1].v },
-    ];
+    // Pct change labels on each segment midpoint
+    const changes = pts.slice(1).map((pt, i) => ({
+      x: (pts[i].x + pt.x) / 2,
+      y: (pts[i].y + pt.y) / 2,
+      pct: (pt.v - pts[i].v) / pts[i].v,
+    }));
     g.selectAll('.chg')
       .data(changes)
       .enter()
@@ -140,11 +148,7 @@ export function useTrendChart({ svgRef, values }) {
       .text(d => fmtValue(d.v));
 
     // X-axis labels
-    const xMeta = [
-      { yr: 2024, sub: 'Budget' },
-      { yr: 2025, sub: 'Actual*' },
-      { yr: 2026, sub: 'Budget' },
-    ];
+    const xMeta = TREND_YEARS.map(yr => ({ yr, sub: YEAR_SUBS[yr] ?? 'Budget' }));
     const xG = g.selectAll('.x-lbl')
       .data(xMeta)
       .enter()

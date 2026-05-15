@@ -1,3 +1,5 @@
+import { budget2022 } from './budget2022';
+
 import {
   budget2026,
   generalFundBreakdown as gf2026,
@@ -47,12 +49,17 @@ import {
 } from './budget2024';
 
 export const budgets = {
+  2022: budget2022,
   2024: budget2024,
   2025: budget2025,
   2026: budget2026,
 };
 
 export const drillDown = {
+  2022: {
+    revenue: {},
+    expenditure: {},
+  },
   2024: {
     revenue: {
       'General Fund': gf2024.revenue,

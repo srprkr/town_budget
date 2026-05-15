@@ -125,6 +125,17 @@ header h1 {
     border-color: var(--accent);
     color: var(--bg);
   }
+
+  &.badge-more {
+    border-style: dashed;
+    opacity: 0.65;
+
+    &:hover {
+      opacity: 1;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+  }
 }
 
 main {

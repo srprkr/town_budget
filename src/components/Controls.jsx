@@ -1,4 +1,4 @@
-const YEARS = [2026, 2025, 2024];
+const YEARS = [2026, 2025, 2024, 2022];
 const TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
 
 const Controls = ({ year, type, onYearChange, onTypeChange }) => (
