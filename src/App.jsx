@@ -57,7 +57,7 @@ function App() {
             key={`${fund}-${type}`}
             values={
               fund === 'All'
-                ? TREND_YEARS.map((_, i) => TREND_FUNDS.reduce((sum, f) => sum + trends[type][f][i], 0))
+                ? TREND_YEARS.map((_, i) => TREND_FUNDS.reduce((sum, f) => sum + (trends[type][f][i] ?? 0), 0))
                 : trends[type][fund]
             }
             fund={fund === 'All' ? 'All Funds' : fund}

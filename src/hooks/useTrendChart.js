@@ -37,8 +37,9 @@ export function useTrendChart({ svgRef, values, actuals = {} }) {
       .range([0, IW])
       .padding(0.3);
 
+    const allVals = [...values.filter(v => v != null), ...Object.values(actuals)];
     const yScale = d3.scaleLinear()
-      .domain([0, d3.max(values) * 1.2])
+      .domain([0, d3.max(allVals) * 1.2])
       .range([IH, 0])
       .nice();
 
@@ -63,15 +64,16 @@ export function useTrendChart({ svgRef, values, actuals = {} }) {
 
     const pts = TREND_YEARS.map((yr, i) => {
       const v = actuals[yr] ?? values[i];
+      if (v == null) return null;
       return { yr, v, x: xScale(yr), y: yScale(v), isActual: yr in actuals };
-    });
+    }).filter(Boolean);
 
     const line = d3.line().x(d => d.x).y(d => d.y);
     const area = d3.area().x(d => d.x).y0(IH).y1(d => d.y);
 
-    // All points except last = historical (solid); last two = planned (dashed)
-    const solidPts = pts.slice(0, pts.length - 1);
-    const dashedPts = pts.slice(pts.length - 2);
+    // 2025+ = planned (dashed); earlier = historical (solid); 2024 is the junction point
+    const solidPts = pts.filter(d => d.yr <= 2024);
+    const dashedPts = pts.filter(d => d.yr >= 2024);
 
     // Shaded fill under historical segment
     g.append('path')
