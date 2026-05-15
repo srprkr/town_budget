@@ -17,7 +17,7 @@ export const TREND_FUNDS = [
   'Ambulance Service Fund',
 ];
 
-// [2022 Budget, 2023 Budget, 2024 Budget, 2025 Year-End Projection, 2026 Budget]
+// [2022 Budget, 2023 Budget, 2024 Budget, 2025 Budget, 2026 Budget]
 export const trends = {
   revenue: {
     'General Fund':               [4818180, 4751204, 4714011, 5011524, 4867271],
@@ -50,5 +50,42 @@ export const trends = {
     'Street Tax Fund':            [ 178737,  115960,  108500,  106156,   98500],
     'Street Lighting Tax Fund':   [  58597,   68997,   67997,   45358,   61213],
     'Ambulance Service Fund':     [      0,   13704,   13451,   12525,   13456],
+  },
+};
+
+// Year-end actual values sourced from the following budget document's "Year End" column:
+//   2023 actuals → 2024 Budget "2023 Year end Projection" (Appendix C, Summary by Fund)
+export const actuals = {
+  revenue: {
+    'General Fund':               { 2023: 5337312 },
+    'Capital Projects Fund':      { 2023:  407221 },
+    'Sewer Fund':                 { 2023:  456926 },
+    'Solid Waste Fund':           { 2023:  581011 },
+    'Police Pension Fund':        { 2023:  574472 },
+    'Debt Service Fund':          { 2023:  336542 },
+    'Library Fund':               { 2023:  232871 },
+    'Fire Protection Fund':       { 2023:  191297 },
+    'Non-Uniformed Pension Fund': { 2023:   63877 },
+    'Fire Apparatus Fund':        { 2023:   46871 },
+    'State Liquid Fuels Fund':    { 2023:  123174 },
+    'Street Tax Fund':            { 2023:   76361 },
+    'Street Lighting Tax Fund':   { 2023:   56832 },
+    'Ambulance Service Fund':     { 2023:   13300 },
+  },
+  expenditure: {
+    'General Fund':               { 2023: 5018516 },
+    'Capital Projects Fund':      { 2023:  394172 },
+    'Sewer Fund':                 { 2023:  587705 },
+    'Solid Waste Fund':           { 2023:  449318 },
+    'Police Pension Fund':        { 2023:  355303 },
+    'Debt Service Fund':          { 2023:  300970 },
+    'Library Fund':               { 2023:  237871 },
+    'Fire Protection Fund':       { 2023:  194241 },
+    'Non-Uniformed Pension Fund': { 2023:   53427 },
+    'Fire Apparatus Fund':        { 2023:   39466 },
+    'State Liquid Fuels Fund':    { 2023:  187698 },
+    'Street Tax Fund':            { 2023:   93985 },
+    'Street Lighting Tax Fund':   { 2023:   77083 },
+    'Ambulance Service Fund':     { 2023:   13451 },
   },
 };

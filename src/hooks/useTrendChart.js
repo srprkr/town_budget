@@ -8,9 +8,6 @@ const H = 400;
 const IW = W - MARGIN.left - MARGIN.right;
 const IH = H - MARGIN.top - MARGIN.bottom;
 
-// Years labeled "Actual*" (year-end projections, not final audit figures)
-const YEAR_SUBS = { 2025: 'Actual*' };
-
 const fmtValue = v => {
   if (v >= 1e6) return `$${+(v / 1e6).toFixed(2)}M`;
   if (v >= 1e3) return `$${+(v / 1e3).toFixed(1)}K`;
@@ -24,9 +21,11 @@ const fmtAxis = v => {
   return `$${v}`;
 };
 
-export function useTrendChart({ svgRef, values }) {
+export function useTrendChart({ svgRef, values, actuals = {} }) {
   useEffect(() => {
     if (!values || !svgRef.current) return;
+
+    const YEAR_SUBS = Object.fromEntries(Object.keys(actuals).map(yr => [+yr, 'Actual']));
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
@@ -62,12 +61,10 @@ export function useTrendChart({ svgRef, values }) {
         sel.selectAll('text').attr('fill', 'var(--text-muted, #888)').attr('font-size', '12px');
       });
 
-    const pts = TREND_YEARS.map((yr, i) => ({
-      yr,
-      v: values[i],
-      x: xScale(yr),
-      y: yScale(values[i]),
-    }));
+    const pts = TREND_YEARS.map((yr, i) => {
+      const v = actuals[yr] ?? values[i];
+      return { yr, v, x: xScale(yr), y: yScale(v), isActual: yr in actuals };
+    });
 
     const line = d3.line().x(d => d.x).y(d => d.y);
     const area = d3.area().x(d => d.x).y0(IH).y1(d => d.y);
@@ -186,14 +183,5 @@ export function useTrendChart({ svgRef, values }) {
     lgG.append('text').attr('x', 116).attr('y', 4)
       .attr('fill', 'var(--text-muted, #888)').attr('font-size', '11px').text('Planned');
 
-    // Footnote
-    g.append('text')
-      .attr('x', 0)
-      .attr('y', IH + 82)
-      .attr('fill', 'var(--text-muted, #888)')
-      .attr('font-size', '10px')
-      .attr('font-style', 'italic')
-      .text('* 2025 figures are year-end projections from the 2026 budget document');
-
-  }, [values]);
+  }, [values, actuals]);
 }

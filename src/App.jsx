@@ -4,7 +4,7 @@ import TrendChart from './components/TrendChart';
 import Controls from './components/Controls';
 import TrendControls from './components/TrendControls';
 import { budgets, drillDown } from './data';
-import { trends, TREND_FUNDS, TREND_YEARS } from './data/trends';
+import { trends, TREND_FUNDS, TREND_YEARS, actuals as trendActuals } from './data/trends';
 import { useTheme } from './hooks/useTheme';
 import './App.css';
 
@@ -62,6 +62,15 @@ function App() {
             }
             fund={fund === 'All' ? 'All Funds' : fund}
             type={type}
+            actuals={
+              fund === 'All'
+                ? TREND_YEARS.reduce((out, yr) => {
+                    const total = TREND_FUNDS.reduce((s, f) => s + (trendActuals[type][f]?.[yr] ?? 0), 0);
+                    if (total) out[yr] = total;
+                    return out;
+                  }, {})
+                : (trendActuals[type][fund] ?? {})
+            }
           />
         )}
       </main>

@@ -2,9 +2,9 @@ import { useRef } from 'react';
 import { useTrendChart } from '../hooks/useTrendChart';
 import './TrendChart.css';
 
-const TrendChart = ({ values, fund, type }) => {
+const TrendChart = ({ values, fund, type, actuals = {} }) => {
   const svgRef = useRef(null);
-  useTrendChart({ svgRef, values });
+  useTrendChart({ svgRef, values, actuals });
 
   return (
     <div className="trend-wrap">
