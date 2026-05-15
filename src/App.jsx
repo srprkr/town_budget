@@ -48,7 +48,6 @@ function App() {
       <main>
         {view === 'budget' ? (
           <BudgetChart
-            key={`${year}-${type}`}
             data={budgets[year][type]}
             title={`${year} Planned ${type === 'revenue' ? 'Revenue' : 'Expenditures'} by Fund`}
             drillDownData={drillDown[year][type]}

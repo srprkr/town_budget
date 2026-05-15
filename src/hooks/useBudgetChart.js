@@ -8,16 +8,18 @@ const DRILL_DURATION = 480;
 const TWO_PI = Math.PI * 2;
 
 export function useBudgetChart({ svgRef, data, drillDownData }) {
-  const drillRef = useRef({ history: [], labelHistory: [], animating: false, drillBack: null });
+  const drillRef = useRef({ history: [], labelHistory: [], animating: false, drillBack: null, drilledFund: null });
   const [breadcrumb, setBreadcrumb] = useState([]);
   const [tooltip, setTooltip] = useState(null);
 
   useEffect(() => {
     if (!data || !svgRef.current) return;
 
+    const resumeFund = drillRef.current.drilledFund;
     drillRef.current.history = [];
     drillRef.current.labelHistory = [];
     drillRef.current.animating = false;
+    drillRef.current.drilledFund = null;
     setBreadcrumb([]);
 
     const svg = d3.select(svgRef.current);
@@ -281,6 +283,7 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
 
       drillRef.current.history.push(parentData);
       drillRef.current.labelHistory.push(drillRef.current.currentLabel || 'All Funds');
+      drillRef.current.drilledFund = clickedD.data.name;
       setBreadcrumb(prev => [...prev, clickedD.data.name]);
 
       drawArcs(drillDownData[clickedD.data.name], { animateIn: false, depth: depth + 1, label: clickedD.data.name });
@@ -317,6 +320,7 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
       const parentData = drillRef.current.history.pop();
       const parentLabel = drillRef.current.labelHistory.pop() || 'All Funds';
       const depth = drillRef.current.history.length;
+      drillRef.current.drilledFund = depth > 0 ? drillRef.current.labelHistory[depth - 1] : null;
       setBreadcrumb(prev => prev.slice(0, -1));
 
       drawArcs(parentData, { animateIn: true, depth, label: parentLabel });
@@ -324,6 +328,14 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
     };
 
     drawArcs(data, { label: 'All Funds' });
+
+    if (resumeFund && drillDownData[resumeFund]) {
+      drillRef.current.history.push(data);
+      drillRef.current.labelHistory.push('All Funds');
+      drillRef.current.drilledFund = resumeFund;
+      setBreadcrumb([resumeFund]);
+      drawArcs(drillDownData[resumeFund], { depth: 1, label: resumeFund });
+    }
 
   }, [data, drillDownData]);
 
