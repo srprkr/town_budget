@@ -73,13 +73,82 @@ header h1 {
 }
 
 .controls {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px 32px;
   border-bottom: 1px solid var(--border);
   background: var(--accent-bg);
 }
+
+.controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.controls-summary {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  opacity: 0.55;
+  letter-spacing: 0.03em;
+}
+
+.controls-toggle {
+  background: none;
+  border: none;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--accent);
+  }
+}
+
+.controls-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.is-collapsed {
+    grid-template-rows: 0fr;
+  }
+}
+
+.controls-body-inner {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 32px 20px;
+}
+
+.toggle-icon {
+  fill: none;
+  overflow: visible;
+}
+
+.bar {
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  fill: none;
+  transition: d 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bar-top { d: path('M3 8 L21 8'); }
+.bar-bottom { d: path('M3 16 L21 16'); }
+
+.toggle-icon.is-open .bar-top { d: path('M5 5 L19 19'); }
+.toggle-icon.is-open .bar-bottom { d: path('M19 5 L5 19'); }
 
 .control-row {
   display: flex;
@@ -151,8 +220,12 @@ main {
     font-size: 24px;
   }
 
-  .controls {
-    padding: 16px;
+  .controls-header {
+    padding: 12px 16px;
+  }
+
+  .controls-body-inner {
+    padding: 0 16px 16px;
   }
 
   .badge {
