@@ -147,8 +147,8 @@ header h1 {
 .bar-top { d: path('M3 8 L21 8'); }
 .bar-bottom { d: path('M3 16 L21 16'); }
 
-.toggle-icon.is-open .bar-top { d: path('M5 5 L19 19'); }
-.toggle-icon.is-open .bar-bottom { d: path('M19 5 L5 19'); }
+.toggle-icon.is-open .bar-top { d: path('M3 16 L12 8'); }
+.toggle-icon.is-open .bar-bottom { d: path('M12 8 L21 16'); }
 
 .control-row {
   display: flex;
