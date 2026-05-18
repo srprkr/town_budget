@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-const YEARS = [2026, 2025, 2024, 2023, 2022, 2021];
+const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
 const TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
 
 const TOP_CLOSED = [3, 8, 21, 8];
