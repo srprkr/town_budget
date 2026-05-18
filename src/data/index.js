@@ -1,4 +1,19 @@
 import {
+  budget2021,
+  generalFundBreakdown as gf2021,
+  capitalProjectsBreakdown as cap2021,
+  sewerFundBreakdown as sewer2021,
+  solidWasteBreakdown as solid2021,
+  policePensionBreakdown as policePension2021,
+  fireProtectionBreakdown as fireProt2021,
+  debtServiceBreakdown as debt2021,
+  fireApparatusBreakdown as fireApp2021,
+  streetLightingBreakdown as streetLight2021,
+  streetTaxBreakdown as streetTax2021,
+  stateLiquidFuelsBreakdown as liquidFuels2021,
+  nonUniformedPensionBreakdown as nonUniform2021,
+} from './budget2021';
+import {
   budget2022,
   generalFundBreakdown as gf2022,
   capitalProjectsBreakdown as cap2022,
@@ -78,6 +93,7 @@ import {
 } from './budget2024';
 
 export const budgets = {
+  2021: budget2021,
   2022: budget2022,
   2023: budget2023,
   2024: budget2024,
@@ -86,6 +102,36 @@ export const budgets = {
 };
 
 export const drillDown = {
+  2021: {
+    revenue: {
+      'General Fund': gf2021.revenue,
+      'Capital Projects Fund': cap2021.revenue,
+      'Sewer Fund': sewer2021.revenue,
+      'Solid Waste Fund': solid2021.revenue,
+      'Debt Service Fund': debt2021.revenue,
+      'Street Tax Fund': streetTax2021.revenue,
+      'State Liquid Fuels Fund': liquidFuels2021.revenue,
+      'Police Pension Fund': policePension2021.revenue,
+      'Non-Uniformed Pension Fund': nonUniform2021.revenue,
+      'Fire Protection Fund': fireProt2021.revenue,
+      'Fire Apparatus Fund': fireApp2021.revenue,
+      'Street Lighting Tax Fund': streetLight2021.revenue,
+    },
+    expenditure: {
+      'General Fund': gf2021.expenditure,
+      'Capital Projects Fund': cap2021.expenditure,
+      'Sewer Fund': sewer2021.expenditure,
+      'Solid Waste Fund': solid2021.expenditure,
+      'Debt Service Fund': debt2021.expenditure,
+      'Street Tax Fund': streetTax2021.expenditure,
+      'State Liquid Fuels Fund': liquidFuels2021.expenditure,
+      'Police Pension Fund': policePension2021.expenditure,
+      'Non-Uniformed Pension Fund': nonUniform2021.expenditure,
+      'Fire Protection Fund': fireProt2021.expenditure,
+      'Fire Apparatus Fund': fireApp2021.expenditure,
+      'Street Lighting Tax Fund': streetLight2021.expenditure,
+    },
+  },
   2022: {
     revenue: {
       'General Fund': gf2022.revenue,
