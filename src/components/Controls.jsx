@@ -5,8 +5,8 @@ const TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
 
 const ToggleIcon = ({ open }) => (
   <svg className={`toggle-icon ${open ? 'is-open' : ''}`} viewBox="0 0 24 24" width="18" height="18">
-    <path className="bar bar-top" />
-    <path className="bar bar-bottom" />
+    <path className="bar bar-top" d="M3 8 L21 8" />
+    <path className="bar bar-bottom" d="M3 16 L21 16" />
   </svg>
 );
 
