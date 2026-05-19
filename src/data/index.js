@@ -107,6 +107,8 @@ import {
   nonUniformedPensionBreakdown as nonUniform2024,
 } from './budget2024';
 
+export { schoolBudgets } from './schoolBudgets';
+
 export const budgets = {
   2020: budget2020,
   2021: budget2021,

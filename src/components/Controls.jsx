@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 
 const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
 const TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
+const SOURCES = [['borough', 'Borough'], ['school', 'School'], ['all', 'All']];
 
 const TOP_CLOSED = [3, 8, 21, 8];
 const TOP_OPEN   = [3, 16, 12, 8];
@@ -47,10 +48,11 @@ const ToggleIcon = ({ open }) => {
   );
 };
 
-const Controls = ({ year, type, onYearChange, onTypeChange }) => {
+const Controls = ({ year, type, source, onYearChange, onTypeChange, onSourceChange }) => {
   const [open, setOpen] = useState(() => !window.matchMedia('(max-width: 768px)').matches);
 
-  const summary = `${year} · ${type === 'revenue' ? 'Revenue' : 'Expenditures'}`;
+  const sourceLabel = SOURCES.find(([v]) => v === source)?.[1] ?? source;
+  const summary = `${year} · ${type === 'revenue' ? 'Revenue' : 'Expenditures'} · ${sourceLabel}`;
 
   return (
     <div className="controls">
@@ -67,6 +69,20 @@ const Controls = ({ year, type, onYearChange, onTypeChange }) => {
       </div>
       <div className={`controls-body${open ? '' : ' is-collapsed'}`}>
         <div className="controls-body-inner">
+          <div className="control-row">
+            <span className="control-label">Source</span>
+            <div className="badges">
+              {SOURCES.map(([val, label]) => (
+                <button
+                  key={val}
+                  className={`badge ${source === val ? 'active' : ''}`}
+                  onClick={() => onSourceChange(val)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="control-row">
             <span className="control-label">Year</span>
             <div className="badges">

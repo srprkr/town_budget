@@ -3,7 +3,7 @@ import BudgetChart from './components/BudgetChart';
 import TrendChart from './components/TrendChart';
 import Controls from './components/Controls';
 import TrendControls from './components/TrendControls';
-import { budgets, drillDown } from './data';
+import { budgets, drillDown, schoolBudgets } from './data';
 import { trends, TREND_FUNDS, TREND_YEARS, actuals as trendActuals } from './data/trends';
 import { useTheme } from './hooks/useTheme';
 import './App.css';
@@ -15,6 +15,7 @@ function App() {
   const [type, setType] = useState('revenue');
   const [view, setView] = useState('budget');
   const [fund, setFund] = useState('General Fund');
+  const [source, setSource] = useState('borough');
   const { theme, toggle } = useTheme();
 
   let trendValues, fundActuals;
@@ -56,6 +57,19 @@ function App() {
       : (trendActuals[type][fund] ?? {});
   }
 
+  const schoolItems = source === 'all' ? (schoolBudgets[year]?.[type] ?? []) : [];
+  const schoolTotal = schoolItems.reduce((s, d) => s + d.value, 0);
+  const chartData =
+    source === 'borough' ? budgets[year][type]
+    : source === 'school' ? (schoolBudgets[year]?.[type] ?? [])
+    : [...budgets[year][type], ...(schoolTotal > 0 ? [{ name: 'Jenkintown School District', value: schoolTotal }] : [])];
+  const chartDrillDown =
+    source === 'borough' ? drillDown[year][type]
+    : source === 'all' && schoolTotal > 0
+      ? { ...drillDown[year][type], 'Jenkintown School District': schoolItems }
+      : source === 'all' ? drillDown[year][type]
+      : undefined;
+
   return (
     <div className="app">
       <header>
@@ -83,15 +97,21 @@ function App() {
         </div>
       </header>
       {view === 'budget'
-        ? <Controls year={year} type={type} onYearChange={setYear} onTypeChange={setType} />
+        ? <Controls year={year} type={type} source={source} onYearChange={setYear} onTypeChange={setType} onSourceChange={setSource} />
         : <TrendControls fund={fund} type={type} onFundChange={setFund} onTypeChange={setType} />
       }
       <main>
         {view === 'budget' ? (
           <BudgetChart
-            data={budgets[year][type]}
-            title={`${year} Planned ${type === 'revenue' ? 'Revenue' : 'Expenditures'} by Fund`}
-            drillDownData={drillDown[year][type]}
+            data={chartData}
+            title={
+              source === 'school'
+                ? `${year - 1}–${String(year).slice(2)} School District Planned ${type === 'revenue' ? 'Revenue' : 'Expenditures'}`
+                : source === 'all'
+                  ? `${year} Combined Borough & School Planned ${type === 'revenue' ? 'Revenue' : 'Expenditures'}`
+                  : `${year} Planned ${type === 'revenue' ? 'Revenue' : 'Expenditures'} by Fund`
+            }
+            drillDownData={chartDrillDown}
           />
         ) : (
           <TrendChart
