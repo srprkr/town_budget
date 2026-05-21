@@ -1,8 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
+import { TREND_FUNDS } from '../data/trends';
 
 const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
-const TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
+const BUDGET_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
+const TREND_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures'], ['balance', 'Surplus / Deficit']];
 const SOURCES = [['borough', 'Borough'], ['school', 'School'], ['all', 'All']];
+const VIEWS = [['budget', 'Budget'], ['trends', 'Trends']];
+const INITIAL_VISIBLE = 5;
 
 const TOP_CLOSED = [3, 8, 21, 8];
 const TOP_OPEN   = [3, 16, 12, 8];
@@ -48,16 +52,44 @@ const ToggleIcon = ({ open }) => {
   );
 };
 
-const Controls = ({ year, type, source, onYearChange, onTypeChange, onSourceChange }) => {
+const Controls = ({
+  view, onViewChange,
+  year, type, source, onYearChange, onTypeChange, onSourceChange,
+  fund, onFundChange,
+}) => {
   const [open, setOpen] = useState(() => !window.matchMedia('(max-width: 768px)').matches);
+  const [expanded, setExpanded] = useState(false);
 
-  const sourceLabel = SOURCES.find(([v]) => v === source)?.[1] ?? source;
-  const summary = `${year} · ${type === 'revenue' ? 'Revenue' : 'Expenditures'} · ${sourceLabel}`;
+  const visible = expanded ? TREND_FUNDS : TREND_FUNDS.slice(0, INITIAL_VISIBLE);
+  const hiddenCount = TREND_FUNDS.length - INITIAL_VISIBLE;
+
+  const handleCollapse = () => {
+    setExpanded(false);
+    if (fund !== 'All' && TREND_FUNDS.indexOf(fund) >= INITIAL_VISIBLE) {
+      onFundChange(TREND_FUNDS[0]);
+    }
+  };
+
+  const handleViewChange = (val) => {
+    onViewChange(val);
+    if (val === 'budget' && type === 'balance') onTypeChange('expenditure');
+  };
 
   return (
     <div className="controls">
       <div className="controls-header" onClick={() => setOpen(o => !o)}>
-        <span className="controls-summary">{summary}</span>
+        <span className="controls-summary">Filters</span>
+        <div className="badges" onClick={e => e.stopPropagation()}>
+          {VIEWS.map(([val, label]) => (
+            <button
+              key={val}
+              className={`badge ${view === val ? 'active' : ''}`}
+              onClick={() => handleViewChange(val)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
         <button
           className="controls-toggle"
           aria-label="Toggle filters"
@@ -69,48 +101,99 @@ const Controls = ({ year, type, source, onYearChange, onTypeChange, onSourceChan
       </div>
       <div className={`controls-body${open ? '' : ' is-collapsed'}`}>
         <div className="controls-body-inner">
-          <div className="control-row">
-            <span className="control-label">Source</span>
-            <div className="badges">
-              {SOURCES.map(([val, label]) => (
-                <button
-                  key={val}
-                  className={`badge ${source === val ? 'active' : ''}`}
-                  onClick={() => onSourceChange(val)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="control-row">
-            <span className="control-label">Year</span>
-            <div className="badges">
-              {YEARS.map(y => (
-                <button
-                  key={y}
-                  className={`badge ${year === y ? 'active' : ''}`}
-                  onClick={() => onYearChange(y)}
-                >
-                  {y}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="control-row">
-            <span className="control-label">Type</span>
-            <div className="badges">
-              {TYPES.map(([val, label]) => (
-                <button
-                  key={val}
-                  className={`badge ${type === val ? 'active' : ''}`}
-                  onClick={() => onTypeChange(val)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
+
+          {view === 'budget' ? (
+            <>
+              <div className="control-row">
+                <span className="control-label">Source</span>
+                <div className="badges">
+                  {SOURCES.map(([val, label]) => (
+                    <button
+                      key={val}
+                      className={`badge ${source === val ? 'active' : ''}`}
+                      onClick={() => onSourceChange(val)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="control-row">
+                <span className="control-label">Year</span>
+                <div className="badges">
+                  {YEARS.map(y => (
+                    <button
+                      key={y}
+                      className={`badge ${year === y ? 'active' : ''}`}
+                      onClick={() => onYearChange(y)}
+                    >
+                      {y}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="control-row">
+                <span className="control-label">Type</span>
+                <div className="badges">
+                  {BUDGET_TYPES.map(([val, label]) => (
+                    <button
+                      key={val}
+                      className={`badge ${type === val ? 'active' : ''}`}
+                      onClick={() => onTypeChange(val)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="control-row">
+                <span className="control-label">Fund</span>
+                <div className="badges">
+                  <button
+                    className={`badge ${fund === 'All' ? 'active' : ''}`}
+                    onClick={() => onFundChange('All')}
+                  >
+                    All
+                  </button>
+                  {visible.map(f => (
+                    <button
+                      key={f}
+                      className={`badge ${fund === f ? 'active' : ''}`}
+                      onClick={() => onFundChange(f)}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                  {!expanded ? (
+                    <button className="badge badge-more" onClick={() => setExpanded(true)}>
+                      Show {hiddenCount} More
+                    </button>
+                  ) : (
+                    <button className="badge badge-more" onClick={handleCollapse}>
+                      Show Less
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="control-row">
+                <span className="control-label">Type</span>
+                <div className="badges">
+                  {TREND_TYPES.map(([val, label]) => (
+                    <button
+                      key={val}
+                      className={`badge ${type === val ? 'active' : ''}`}
+                      onClick={() => onTypeChange(val)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

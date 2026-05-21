@@ -2,13 +2,10 @@ import { useState } from 'react';
 import BudgetChart from './components/BudgetChart';
 import TrendChart from './components/TrendChart';
 import Controls from './components/Controls';
-import TrendControls from './components/TrendControls';
 import { budgets, drillDown, schoolBudgets } from './data';
 import { trends, TREND_FUNDS, TREND_YEARS, actuals as trendActuals } from './data/trends';
 import { useTheme } from './hooks/useTheme';
 import './App.css';
-
-const VIEWS = [['budget', 'Budget'], ['trends', 'Trends']];
 
 function App() {
   const [year, setYear] = useState(2026);
@@ -84,22 +81,13 @@ function App() {
             </svg>
           </button>
         </div>
-        <div className="view-nav">
-          {VIEWS.map(([val, label]) => (
-            <button
-              key={val}
-              className={`badge ${view === val ? 'active' : ''}`}
-              onClick={() => { setView(val); if (val === 'budget' && type === 'balance') setType('expenditure'); }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
       </header>
-      {view === 'budget'
-        ? <Controls year={year} type={type} source={source} onYearChange={setYear} onTypeChange={setType} onSourceChange={setSource} />
-        : <TrendControls fund={fund} type={type} onFundChange={setFund} onTypeChange={setType} />
-      }
+      <Controls
+        view={view} onViewChange={setView}
+        year={year} type={type} source={source}
+        onYearChange={setYear} onTypeChange={setType} onSourceChange={setSource}
+        fund={fund} onFundChange={setFund}
+      />
       <main>
         {view === 'budget' ? (
           <BudgetChart

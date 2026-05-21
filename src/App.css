@@ -69,13 +69,6 @@ header h1 {
   opacity: 1;
 }
 
-.view-nav {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 12px;
-}
-
 .controls {
   border-bottom: 1px solid var(--border);
   background: var(--accent-bg);
