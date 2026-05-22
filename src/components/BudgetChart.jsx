@@ -7,9 +7,9 @@ import './BudgetChart.css';
 const WIDTH = 900;
 const HEIGHT = 700;
 
-const BudgetChart = ({ data, title, drillDownData = {} }) => {
+const BudgetChart = ({ data, title, drillDownData, onSegmentClick, onDrillIn, onBack }) => {
   const svgRef = useRef();
-  const { breadcrumb, tooltip } = useBudgetChart({ svgRef, data, drillDownData });
+  const { breadcrumb, tooltip } = useBudgetChart({ svgRef, data, drillDownData, onSegmentClick, onDrillIn, onBack });
 
   return (
     <div style={{ textAlign: 'center', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>

@@ -7,13 +7,29 @@ const RADIUS = Math.min(WIDTH, HEIGHT) / 2 - 80;
 const DRILL_DURATION = 480;
 const TWO_PI = Math.PI * 2;
 
-export function useBudgetChart({ svgRef, data, drillDownData }) {
+const EMPTY_DRILL = {};
+
+export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onSegmentClick, onDrillIn, onBack }) {
+  const drillDownData = drillDownProp ?? EMPTY_DRILL;
+  const onSegmentClickRef = useRef(onSegmentClick);
+  onSegmentClickRef.current = onSegmentClick;
+  const onDrillInRef = useRef(onDrillIn);
+  onDrillInRef.current = onDrillIn;
+  const onBackRef = useRef(onBack);
+  onBackRef.current = onBack;
+  const drillDownDataRef = useRef(drillDownData);
+  drillDownDataRef.current = drillDownData;
+  const suppressRedrawRef = useRef(false);
   const drillRef = useRef({ history: [], labelHistory: [], animating: false, drillBack: null, drilledFund: null });
   const [breadcrumb, setBreadcrumb] = useState([]);
   const [tooltip, setTooltip] = useState(null);
 
   useEffect(() => {
     if (!data || !svgRef.current) return;
+    if (suppressRedrawRef.current) {
+      suppressRedrawRef.current = false;
+      return;
+    }
 
     const resumeFund = drillRef.current.drilledFund;
     drillRef.current.history = [];
@@ -129,14 +145,18 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
         .append('g')
         .attr('class', 'arc');
 
+      // Use ref so cursor/actionable check is always current, not stale from effect closure
+      const isActionable = d => !!(drillDownDataRef.current[d.data.name] || onSegmentClickRef.current);
+
       const paths = arcs.append('path')
         .attr('stroke', 'var(--bg)')
         .attr('stroke-width', 2)
         .attr('fill', (d, i) => color(i))
-        .style('cursor', d => drillDownData[d.data.name] ? 'pointer' : 'default')
+        .style('cursor', 'default')
         .on('mouseenter', function(event, d) {
           if (drillRef.current.animating) return;
-          if (drillDownData[d.data.name]) {
+          if (isActionable(d)) {
+            d3.select(this).style('cursor', 'pointer');
             d3.select(this.parentNode).raise();
             d3.select(this).attr('stroke', 'white').attr('stroke-width', 3);
           }
@@ -147,7 +167,7 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
             percent: ((d.data.value / total) * 100).toFixed(1),
             x: event.clientX - rect.left,
             y: event.clientY - rect.top,
-            drillable: !!drillDownData[d.data.name],
+            drillable: isActionable(d),
           });
         })
         .on('mousemove', event => {
@@ -155,7 +175,7 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
           setTooltip(p => p ? { ...p, x: event.clientX - rect.left, y: event.clientY - rect.top } : null);
         })
         .on('mouseleave', function() {
-          d3.select(this).attr('stroke', 'var(--bg)').attr('stroke-width', 2);
+          d3.select(this).style('cursor', 'default').attr('stroke', 'var(--bg)').attr('stroke-width', 2);
           setTooltip(null);
         })
         .on('touchstart', function(event, d) {
@@ -176,7 +196,7 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
               percent: ((d.data.value / total) * 100).toFixed(1),
               x: touch.clientX - rect.left,
               y: touch.clientY - rect.top,
-              drillable: !!drillDownData[d.data.name],
+              drillable: isActionable(d),
             });
             hideTimer = setTimeout(() => setTooltip(null), 2500);
           }, 400);
@@ -192,8 +212,13 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
         })
         .on('click', function(event, d) {
           if (drillRef.current.longPressed) { drillRef.current.longPressed = false; return; }
-          if (drillRef.current.animating || !drillDownData[d.data.name]) return;
-          drillIn(d, this, chartData, depth);
+          // Use drillDownDataRef so this is never stale after a suppressed redraw
+          if (drillDownDataRef.current[d.data.name]) {
+            if (drillRef.current.animating) return;
+            drillIn(d, this, chartData, depth);
+          } else if (onSegmentClickRef.current) {
+            onSegmentClickRef.current(d.data.name);
+          }
         });
 
       if (animateIn) {
@@ -281,12 +306,22 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
         return;
       }
 
+      // Push to history so drillBack can return here
       drillRef.current.history.push(parentData);
       drillRef.current.labelHistory.push(drillRef.current.currentLabel || 'All Funds');
       drillRef.current.drilledFund = clickedD.data.name;
       setBreadcrumb(prev => [...prev, clickedD.data.name]);
 
-      drawArcs(drillDownData[clickedD.data.name], { animateIn: false, depth: depth + 1, label: clickedD.data.name });
+      if (onDrillInRef.current) {
+        // Cross-source drill (All → Borough/School): draw the fund data at depth 1
+        // so the back button appears, then switch the source badge.
+        // Use drillDownDataRef so we always have the live drilldown map.
+        drawArcs(drillDownDataRef.current[clickedD.data.name], { animateIn: false, depth: 1, label: clickedD.data.name });
+        suppressRedrawRef.current = true;
+        onDrillInRef.current(clickedD.data.name);
+      } else {
+        drawArcs(drillDownDataRef.current[clickedD.data.name], { animateIn: false, depth: depth + 1, label: clickedD.data.name });
+      }
       setTimeout(() => { drillRef.current.animating = false; }, DRILL_DURATION + 60);
     }
 
@@ -323,7 +358,14 @@ export function useBudgetChart({ svgRef, data, drillDownData }) {
       drillRef.current.drilledFund = depth > 0 ? drillRef.current.labelHistory[depth - 1] : null;
       setBreadcrumb(prev => prev.slice(0, -1));
 
-      drawArcs(parentData, { animateIn: true, depth, label: parentLabel });
+      if (depth === 0 && onBackRef.current) {
+        // Returning to the All view — animate it back then switch the source badge
+        drawArcs(parentData, { animateIn: true, depth: 0, label: parentLabel });
+        suppressRedrawRef.current = true;
+        onBackRef.current();
+      } else {
+        drawArcs(parentData, { animateIn: true, depth, label: parentLabel });
+      }
       setTimeout(() => { drillRef.current.animating = false; }, DRILL_DURATION + 60);
     };
 

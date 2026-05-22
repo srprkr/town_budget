@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import BudgetChart from './components/BudgetChart';
 import TrendChart from './components/TrendChart';
 import Controls from './components/Controls';
@@ -14,6 +14,12 @@ function App() {
   const [fund, setFund] = useState('General Fund');
   const [source, setSource] = useState('borough');
   const { theme, toggle } = useTheme();
+  const drillFromAllRef = useRef(false);
+
+  const handleSourceChange = (newSource) => {
+    drillFromAllRef.current = false;
+    setSource(newSource);
+  };
 
   let trendValues, fundActuals;
   if (type === 'balance') {
@@ -56,16 +62,36 @@ function App() {
 
   const schoolItems = source === 'all' ? (schoolBudgets[year]?.[type] ?? []) : [];
   const schoolTotal = schoolItems.reduce((s, d) => s + d.value, 0);
+  const boroughTotal = source === 'all' ? budgets[year][type].reduce((s, d) => s + d.value, 0) : 0;
+
   const chartData =
     source === 'borough' ? budgets[year][type]
     : source === 'school' ? (schoolBudgets[year]?.[type] ?? [])
-    : [...budgets[year][type], ...(schoolTotal > 0 ? [{ name: 'Jenkintown School District', value: schoolTotal }] : [])];
+    : [
+        { name: 'Borough of Jenkintown', value: boroughTotal },
+        ...(schoolTotal > 0 ? [{ name: 'Jenkintown School District', value: schoolTotal }] : []),
+      ];
+
   const chartDrillDown =
-    source === 'borough' ? drillDown[year][type]
-    : source === 'all' && schoolTotal > 0
-      ? { ...drillDown[year][type], 'Jenkintown School District': schoolItems }
-      : source === 'all' ? drillDown[year][type]
-      : undefined;
+    source === 'all'
+      ? {
+          'Borough of Jenkintown': budgets[year][type],
+          ...(schoolTotal > 0 ? { 'Jenkintown School District': schoolBudgets[year]?.[type] ?? [] } : {}),
+        }
+      : source === 'borough'
+        ? drillDown[year][type]
+        : undefined;
+
+  const onDrillIn = source === 'all' ? (name) => {
+    drillFromAllRef.current = true;
+    if (name === 'Borough of Jenkintown') setSource('borough');
+    else if (name === 'Jenkintown School District') setSource('school');
+  } : undefined;
+
+  const onBack = drillFromAllRef.current ? () => {
+    drillFromAllRef.current = false;
+    setSource('all');
+  } : undefined;
 
   return (
     <div className="app">
@@ -85,7 +111,7 @@ function App() {
       <Controls
         view={view} onViewChange={setView}
         year={year} type={type} source={source}
-        onYearChange={setYear} onTypeChange={setType} onSourceChange={setSource}
+        onYearChange={setYear} onTypeChange={setType} onSourceChange={handleSourceChange}
         fund={fund} onFundChange={setFund}
       />
       <main>
@@ -100,6 +126,8 @@ function App() {
                   : `${year} Planned ${type === 'revenue' ? 'Revenue' : 'Expenditures'} by Fund`
             }
             drillDownData={chartDrillDown}
+            onDrillIn={onDrillIn}
+            onBack={onBack}
           />
         ) : (
           <TrendChart
