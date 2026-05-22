@@ -381,5 +381,5 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
 
   }, [data, drillDownData]);
 
-  return { breadcrumb, tooltip };
+  return { breadcrumb, tooltip, triggerBack: () => drillRef.current.drillBack?.() };
 }

@@ -7,9 +7,10 @@ import './BudgetChart.css';
 const WIDTH = 900;
 const HEIGHT = 700;
 
-const BudgetChart = ({ data, title, drillDownData, onSegmentClick, onDrillIn, onBack }) => {
+const BudgetChart = ({ data, title, drillDownData, onSegmentClick, onDrillIn, onBack, backRef }) => {
   const svgRef = useRef();
-  const { breadcrumb, tooltip } = useBudgetChart({ svgRef, data, drillDownData, onSegmentClick, onDrillIn, onBack });
+  const { breadcrumb, tooltip, triggerBack } = useBudgetChart({ svgRef, data, drillDownData, onSegmentClick, onDrillIn, onBack });
+  if (backRef) backRef.current = triggerBack;
 
   return (
     <div style={{ textAlign: 'center', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>

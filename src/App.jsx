@@ -15,8 +15,13 @@ function App() {
   const [source, setSource] = useState('borough');
   const { theme, toggle } = useTheme();
   const drillFromAllRef = useRef(false);
+  const chartBackRef = useRef(null);
 
   const handleSourceChange = (newSource) => {
+    if (newSource === 'all' && drillFromAllRef.current && chartBackRef.current) {
+      chartBackRef.current();
+      return;
+    }
     drillFromAllRef.current = false;
     setSource(newSource);
   };
@@ -128,6 +133,7 @@ function App() {
             drillDownData={chartDrillDown}
             onDrillIn={onDrillIn}
             onBack={onBack}
+            backRef={chartBackRef}
           />
         ) : (
           <TrendChart
