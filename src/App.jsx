@@ -134,6 +134,8 @@ function App() {
             onDrillIn={onDrillIn}
             onBack={onBack}
             backRef={chartBackRef}
+            source={source}
+            year={year}
           />
         ) : (
           <TrendChart
