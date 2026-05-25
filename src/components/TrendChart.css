@@ -12,3 +12,9 @@
   color: var(--text-h);
   margin-bottom: 4px;
 }
+
+.trend-hint {
+  font-size: 11px;
+  color: var(--text-muted, #888);
+  margin-top: 4px;
+}

@@ -17,6 +17,7 @@ const TrendChart = ({ values, fund, type, actuals = {} }) => {
         width="100%"
         style={{ maxWidth: 800, display: 'block' }}
       />
+      <p className="trend-hint">Scroll to zoom · Drag to pan · Double-click to reset</p>
     </div>
   );
 };
