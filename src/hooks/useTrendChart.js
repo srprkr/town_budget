@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import * as d3 from 'd3';
 import { TREND_YEARS } from '../data/trends';
+import { fmtValue, fmtAxis } from '../utils/format';
 
 const MARGIN = { top: 50, right: 40, bottom: 100, left: 85 };
 const W = 800;
@@ -10,23 +11,6 @@ const IH = H - MARGIN.top - MARGIN.bottom;
 
 const GREEN = '#22c55e';
 const RED   = '#ef4444';
-
-const fmtValue = v => {
-  const abs = Math.abs(v);
-  const sign = v < 0 ? '-' : '';
-  if (abs >= 1e6) return `${sign}$${+(abs / 1e6).toFixed(2)}M`;
-  if (abs >= 1e3) return `${sign}$${+(abs / 1e3).toFixed(1)}K`;
-  return `${sign}$${abs.toLocaleString()}`;
-};
-
-const fmtAxis = v => {
-  if (v === 0) return '$0';
-  const abs = Math.abs(v);
-  const sign = v < 0 ? '-' : '';
-  if (abs >= 1e6) return `${sign}$${+(abs / 1e6).toFixed(1)}M`;
-  if (abs >= 1e3) return `${sign}$${+(abs / 1e3).toFixed(0)}K`;
-  return `${sign}$${abs}`;
-};
 
 export function useTrendChart({ svgRef, values, actuals = {} }) {
   useEffect(() => {

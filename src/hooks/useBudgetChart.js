@@ -6,6 +6,10 @@ const HEIGHT = 700;
 const RADIUS = Math.min(WIDTH, HEIGHT) / 2 - 80;
 const DRILL_DURATION = 480;
 const TWO_PI = Math.PI * 2;
+const LONG_PRESS_MS = 400;
+const TOOLTIP_HIDE_MS = 2500;
+const CENTER_LABEL_MAX = 18;
+const ARC_LABEL_MAX = 20;
 
 const EMPTY_DRILL = {};
 
@@ -86,7 +90,7 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
       const labelY = drillable ? -24 : -14;
       const totalY = drillable ? 2 : 14;
 
-      const maxChars = 18;
+      const maxChars = CENTER_LABEL_MAX;
       const displayLabel = label.length > maxChars ? label.substring(0, maxChars - 1) + '…' : label;
 
       g.append('text')
@@ -198,8 +202,8 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
               y: touch.clientY - rect.top,
               drillable: isActionable(d),
             });
-            hideTimer = setTimeout(() => setTooltip(null), 2500);
-          }, 400);
+            hideTimer = setTimeout(() => setTooltip(null), TOOLTIP_HIDE_MS);
+          }, LONG_PRESS_MS);
         })
         .on('touchmove', function() {
           clearTimeout(touchTimer);
@@ -269,7 +273,7 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
           const pct = d.data.value / total * 100;
           if (pct > 5) {
             const name = d.data.name;
-            return name.length > 20 ? name.substring(0, 17) + '...' : name;
+            return name.length > ARC_LABEL_MAX ? name.substring(0, ARC_LABEL_MAX - 3) + '...' : name;
           }
           return '';
         })

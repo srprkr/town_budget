@@ -3,8 +3,8 @@ import BudgetChart from './components/BudgetChart';
 import TrendChart from './components/TrendChart';
 import Controls from './components/Controls';
 import { budgets, drillDown, schoolBudgets } from './data';
-import { trends, TREND_FUNDS, TREND_YEARS, actuals as trendActuals } from './data/trends';
 import { useTheme } from './hooks/useTheme';
+import { useTrendData } from './hooks/useTrendData';
 import './App.css';
 
 function App() {
@@ -26,44 +26,7 @@ function App() {
     setSource(newSource);
   };
 
-  let trendValues, fundActuals;
-  if (type === 'balance') {
-    if (fund === 'All') {
-      trendValues = TREND_YEARS.map((_, i) => {
-        const hasData = TREND_FUNDS.some(f => trends.revenue[f][i] != null);
-        if (!hasData) return null;
-        return TREND_FUNDS.reduce((s, f) => s + (trends.revenue[f][i] ?? 0) - (trends.expenditure[f][i] ?? 0), 0);
-      });
-      fundActuals = TREND_YEARS.reduce((out, yr) => {
-        const hasRev = TREND_FUNDS.some(f => trendActuals.revenue[f]?.[yr] != null);
-        if (!hasRev) return out;
-        out[yr] = TREND_FUNDS.reduce((s, f) =>
-          s + (trendActuals.revenue[f]?.[yr] ?? 0) - (trendActuals.expenditure[f]?.[yr] ?? 0), 0);
-        return out;
-      }, {});
-    } else {
-      trendValues = TREND_YEARS.map((_, i) => {
-        const r = trends.revenue[fund][i], e = trends.expenditure[fund][i];
-        return (r != null && e != null) ? r - e : null;
-      });
-      fundActuals = {};
-      TREND_YEARS.forEach(yr => {
-        const r = trendActuals.revenue[fund]?.[yr], e = trendActuals.expenditure[fund]?.[yr];
-        if (r != null && e != null) fundActuals[yr] = r - e;
-      });
-    }
-  } else {
-    trendValues = fund === 'All'
-      ? TREND_YEARS.map((_, i) => TREND_FUNDS.reduce((sum, f) => sum + (trends[type][f][i] ?? 0), 0))
-      : trends[type][fund];
-    fundActuals = fund === 'All'
-      ? TREND_YEARS.reduce((out, yr) => {
-          const total = TREND_FUNDS.reduce((s, f) => s + (trendActuals[type][f]?.[yr] ?? 0), 0);
-          if (total) out[yr] = total;
-          return out;
-        }, {})
-      : (trendActuals[type][fund] ?? {});
-  }
+  const { trendValues, fundActuals } = useTrendData(fund, type);
 
   const schoolItems = source === 'all' ? (schoolBudgets[year]?.[type] ?? []) : [];
   const schoolTotal = schoolItems.reduce((s, d) => s + d.value, 0);
