@@ -14,15 +14,15 @@ function App() {
   const [fund, setFund] = useState('General Fund');
   const [source, setSource] = useState('borough');
   const { theme, toggle } = useTheme();
-  const drillFromAllRef = useRef(false);
+  const [drilledFromAll, setDrilledFromAll] = useState(false);
   const chartBackRef = useRef(null);
 
   const handleSourceChange = (newSource) => {
-    if (newSource === 'all' && drillFromAllRef.current && chartBackRef.current) {
+    if (newSource === 'all' && drilledFromAll && chartBackRef.current) {
       chartBackRef.current();
       return;
     }
-    drillFromAllRef.current = false;
+    setDrilledFromAll(false);
     setSource(newSource);
   };
 
@@ -51,13 +51,13 @@ function App() {
         : undefined;
 
   const onDrillIn = source === 'all' ? (name) => {
-    drillFromAllRef.current = true;
+    setDrilledFromAll(true);
     if (name === 'Borough of Jenkintown') setSource('borough');
     else if (name === 'Jenkintown School District') setSource('school');
   } : undefined;
 
-  const onBack = drillFromAllRef.current ? () => {
-    drillFromAllRef.current = false;
+  const onBack = drilledFromAll ? () => {
+    setDrilledFromAll(false);
     setSource('all');
   } : undefined;
 

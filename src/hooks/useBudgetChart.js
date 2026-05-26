@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 const WIDTH = 900;
@@ -16,13 +16,15 @@ const EMPTY_DRILL = {};
 export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onSegmentClick, onDrillIn, onBack }) {
   const drillDownData = drillDownProp ?? EMPTY_DRILL;
   const onSegmentClickRef = useRef(onSegmentClick);
-  onSegmentClickRef.current = onSegmentClick;
   const onDrillInRef = useRef(onDrillIn);
-  onDrillInRef.current = onDrillIn;
   const onBackRef = useRef(onBack);
-  onBackRef.current = onBack;
   const drillDownDataRef = useRef(drillDownData);
-  drillDownDataRef.current = drillDownData;
+  useLayoutEffect(() => {
+    onSegmentClickRef.current = onSegmentClick;
+    onDrillInRef.current = onDrillIn;
+    onBackRef.current = onBack;
+    drillDownDataRef.current = drillDownData;
+  });
   const suppressRedrawRef = useRef(false);
   const drillRef = useRef({ history: [], labelHistory: [], animating: false, drillBack: null, drilledFund: null });
   const [breadcrumb, setBreadcrumb] = useState([]);
@@ -383,7 +385,7 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
       drawArcs(drillDownData[resumeFund], { depth: 1, label: resumeFund });
     }
 
-  }, [data, drillDownData]);
+  }, [data, drillDownData, svgRef]);
 
   return { breadcrumb, tooltip, triggerBack: () => drillRef.current.drillBack?.() };
 }

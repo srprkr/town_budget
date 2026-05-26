@@ -229,5 +229,5 @@ export function useTrendChart({ svgRef, values, actuals = {} }) {
       overlay.transition().duration(500).call(zoomBehavior.transform, d3.zoomIdentity);
     });
 
-  }, [values, actuals]);
+  }, [values, actuals, svgRef]);
 }

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useBudgetChart } from '../hooks/useBudgetChart';
 import ChartTooltip from './ChartTooltip';
 import ChartHint from './ChartHint';
@@ -10,7 +10,7 @@ const HEIGHT = 700;
 const BudgetChart = ({ data, title, drillDownData, onSegmentClick, onDrillIn, onBack, backRef, source, year }) => {
   const svgRef = useRef();
   const { breadcrumb, tooltip, triggerBack } = useBudgetChart({ svgRef, data, drillDownData, onSegmentClick, onDrillIn, onBack });
-  if (backRef) backRef.current = triggerBack;
+  useLayoutEffect(() => { if (backRef) backRef.current = triggerBack; });
 
   return (
     <div style={{ textAlign: 'center', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
