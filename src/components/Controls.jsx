@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { TREND_FUNDS } from '../data/trends';
 
-const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
+const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019];
 const BUDGET_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
 const TREND_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures'], ['balance', 'Surplus / Deficit']];
 const SOURCES = [['borough', 'Borough'], ['school', 'School'], ['all', 'All']];
