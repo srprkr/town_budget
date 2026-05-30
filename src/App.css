@@ -199,6 +199,14 @@ header h1 {
   }
 }
 
+.no-data-message {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 15px;
+  color: var(--text);
+  opacity: 0.55;
+}
+
 main {
   flex: 1;
   padding: 40px 20px;

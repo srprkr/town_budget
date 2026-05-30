@@ -28,12 +28,15 @@ function App() {
 
   const { trendValues, fundActuals } = useTrendData(fund, type);
 
+  const hasBoroughData = !!budgets[year];
+  const hasSchoolData = !!schoolBudgets[year];
+
   const schoolItems = source === 'all' ? (schoolBudgets[year]?.[type] ?? []) : [];
   const schoolTotal = schoolItems.reduce((s, d) => s + d.value, 0);
-  const boroughTotal = source === 'all' ? budgets[year][type].reduce((s, d) => s + d.value, 0) : 0;
+  const boroughTotal = source === 'all' ? (budgets[year]?.[type] ?? []).reduce((s, d) => s + d.value, 0) : 0;
 
   const chartData =
-    source === 'borough' ? budgets[year][type]
+    source === 'borough' ? (budgets[year]?.[type] ?? [])
     : source === 'school' ? (schoolBudgets[year]?.[type] ?? [])
     : [
         { name: 'Borough of Jenkintown', value: boroughTotal },
@@ -43,11 +46,11 @@ function App() {
   const chartDrillDown =
     source === 'all'
       ? {
-          'Borough of Jenkintown': budgets[year][type],
+          'Borough of Jenkintown': budgets[year]?.[type] ?? [],
           ...(schoolTotal > 0 ? { 'Jenkintown School District': schoolBudgets[year]?.[type] ?? [] } : {}),
         }
       : source === 'borough'
-        ? drillDown[year][type]
+        ? drillDown[year]?.[type]
         : undefined;
 
   const onDrillIn = source === 'all' ? (name) => {
@@ -83,7 +86,11 @@ function App() {
         fund={fund} onFundChange={setFund}
       />
       <main>
-        {view === 'budget' ? (
+        {view === 'budget' && source === 'school' && !hasSchoolData ? (
+          <p className="no-data-message">No school budget data available for {year}.</p>
+        ) : view === 'budget' && source !== 'school' && !hasBoroughData ? (
+          <p className="no-data-message">No borough budget data available for {year}.</p>
+        ) : view === 'budget' ? (
           <BudgetChart
             data={chartData}
             title={
