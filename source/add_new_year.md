@@ -27,14 +27,21 @@ Read the console output for `⚠` warnings. If any fund's sum differs from its p
 
 Cross-check: the millage table from Step 1 shows the real estate tax portion of each fund's revenue — verify these dollar amounts appear as line items within the corresponding fund breakdowns in the generated JS file.
 
-### 4. Wire into `src/data/index.js`
+### 4. Save source files
+
+Create `source/<year>/` and add:
+- The PDF saved as `source/<year>/<filename>.pdf`
+- A summary markdown `source/<year>/<year>-budget-summary.md` with the millage table, revenue and expenditure by fund, and notes on any anomalies (large debt proceeds, reserve-only funds, etc.)
+
+### 5. Wire into `src/data/index.js`
 
 Copy the import block from the most recent year and update all year suffixes. Then:
 
 - Add `<year>: budget<year>` to the `budgets` object
 - Add a `drillDown[<year>]` entry — `revenue` and `expenditure` sub-objects, each mapping fund name strings to the aliased `.revenue` / `.expenditure` arrays. Only include funds present in the new data file.
+- Add `<year>` to the `YEARS` array in `src/components/Controls.jsx` so it appears in the year selector.
 
-### 5. Update `src/data/trends.js`
+### 6. Update `src/data/trends.js`
 
 - Append `<year>` to the `TREND_YEARS` array
 - For each fund in `TREND_FUNDS`, append the new year's total to its array in `trends.revenue` and `trends.expenditure`. Read the totals from the `budget<year>` top-level export (one entry per fund). Use `null` for any fund with no data.

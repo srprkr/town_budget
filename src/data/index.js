@@ -1,4 +1,19 @@
 import {
+  budget2018,
+  generalFundBreakdown as gf2018,
+  capitalProjectsBreakdown as cap2018,
+  sewerFundBreakdown as sewer2018,
+  solidWasteBreakdown as solid2018,
+  policePensionBreakdown as policePension2018,
+  fireProtectionBreakdown as fireProt2018,
+  debtServiceBreakdown as debt2018,
+  fireApparatusBreakdown as fireApp2018,
+  streetLightingBreakdown as streetLight2018,
+  streetTaxBreakdown as streetTax2018,
+  stateLiquidFuelsBreakdown as liquidFuels2018,
+  nonUniformedPensionBreakdown as nonUniform2018,
+} from './budget2018';
+import {
   budget2019,
   generalFundBreakdown as gf2019,
   capitalProjectsBreakdown as cap2019,
@@ -125,6 +140,7 @@ import {
 export { schoolBudgets } from './schoolBudgets';
 
 export const budgets = {
+  2018: budget2018,
   2019: budget2019,
   2020: budget2020,
   2021: budget2021,
@@ -136,6 +152,36 @@ export const budgets = {
 };
 
 export const drillDown = {
+  2018: {
+    revenue: {
+      'General Fund': gf2018.revenue,
+      'Capital Projects Fund': cap2018.revenue,
+      'Sewer Fund': sewer2018.revenue,
+      'Solid Waste Fund': solid2018.revenue,
+      'Debt Service Fund': debt2018.revenue,
+      'Street Tax Fund': streetTax2018.revenue,
+      'State Liquid Fuels Fund': liquidFuels2018.revenue,
+      'Police Pension Fund': policePension2018.revenue,
+      'Non-Uniformed Pension Fund': nonUniform2018.revenue,
+      'Fire Protection Fund': fireProt2018.revenue,
+      'Fire Apparatus Fund': fireApp2018.revenue,
+      'Street Lighting Tax Fund': streetLight2018.revenue,
+    },
+    expenditure: {
+      'General Fund': gf2018.expenditure,
+      'Capital Projects Fund': cap2018.expenditure,
+      'Sewer Fund': sewer2018.expenditure,
+      'Solid Waste Fund': solid2018.expenditure,
+      'Debt Service Fund': debt2018.expenditure,
+      'Street Tax Fund': streetTax2018.expenditure,
+      'State Liquid Fuels Fund': liquidFuels2018.expenditure,
+      'Police Pension Fund': policePension2018.expenditure,
+      'Non-Uniformed Pension Fund': nonUniform2018.expenditure,
+      'Fire Protection Fund': fireProt2018.expenditure,
+      'Fire Apparatus Fund': fireApp2018.expenditure,
+      'Street Lighting Tax Fund': streetLight2018.expenditure,
+    },
+  },
   2019: {
     revenue: {
       'General Fund': gf2019.revenue,
