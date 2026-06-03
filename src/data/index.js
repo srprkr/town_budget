@@ -1,3 +1,4 @@
+import { budget2016 } from './budget2016';
 import {
   budget2017,
   generalFundBreakdown as gf2017,
@@ -155,6 +156,7 @@ import {
 export { schoolBudgets } from './schoolBudgets';
 
 export const budgets = {
+  2016: budget2016,
   2017: budget2017,
   2018: budget2018,
   2019: budget2019,

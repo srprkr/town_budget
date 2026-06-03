@@ -7,7 +7,7 @@ import './BudgetChart.css';
 const WIDTH = 900;
 const HEIGHT = 700;
 
-const BudgetChart = ({ data, title, drillDownData, onSegmentClick, onDrillIn, onBack, backRef, source, year }) => {
+const BudgetChart = ({ data, title, drillDownData, onSegmentClick, onDrillIn, onBack, backRef, source, year, noDetail }) => {
   const svgRef = useRef();
   const { breadcrumb, tooltip, triggerBack } = useBudgetChart({ svgRef, data, drillDownData, onSegmentClick, onDrillIn, onBack });
   useLayoutEffect(() => { if (backRef) backRef.current = triggerBack; });
@@ -17,7 +17,7 @@ const BudgetChart = ({ data, title, drillDownData, onSegmentClick, onDrillIn, on
       <h2>{title}</h2>
       <div className="chart-container">
         <svg ref={svgRef} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} />
-        <ChartHint breadcrumb={breadcrumb} source={source} year={year} />
+        <ChartHint breadcrumb={breadcrumb} source={source} year={year} noDetail={noDetail} />
         <ChartTooltip tooltip={tooltip} />
       </div>
     </div>

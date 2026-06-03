@@ -93,6 +93,7 @@ function App() {
         ) : view === 'budget' ? (
           <BudgetChart
             data={chartData}
+            noDetail={year === 2016}
             title={
               source === 'school'
                 ? `${year - 1}–${String(year).slice(2)} School District Planned ${type === 'revenue' ? 'Revenue' : 'Expenditures'}`

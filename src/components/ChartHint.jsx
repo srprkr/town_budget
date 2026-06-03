@@ -3,16 +3,18 @@ const SCHOOL_SOURCES = {
   2026: 'https://jenkintowndrakes.org/wp-content/uploads/2025/05/2025-26-Budget-3.10.25-updated.pdf',
 };
 
-const ChartHint = ({ breadcrumb, source, year }) => {
+const ChartHint = ({ breadcrumb, source, year, noDetail }) => {
   const schoolUrl = SCHOOL_SOURCES[year];
   const showBorough = source !== 'school';
   const showSchool = source !== 'borough' && schoolUrl;
 
   return (
     <div className="zoom-hint">
-      {breadcrumb.length === 0
-        ? 'Click a fund to drill down · Scroll to zoom · Double-click to reset zoom'
-        : `Viewing: ${breadcrumb[breadcrumb.length - 1]} · Click center to return`}
+      {noDetail
+        ? 'Fund detail not available for 2016 · Shows property tax allocation only · Scroll to zoom · Double-click to reset zoom'
+        : breadcrumb.length === 0
+          ? 'Click a fund to drill down · Scroll to zoom · Double-click to reset zoom'
+          : `Viewing: ${breadcrumb[breadcrumb.length - 1]} · Click center to return`}
       <br />
       {showBorough && <a target="_blank" rel="noreferrer" href="https://jenkintownboro.com/budgets/">Borough source</a>}
       {showBorough && showSchool && ' · '}
