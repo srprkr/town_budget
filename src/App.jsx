@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import BudgetChart from './components/BudgetChart';
 import TrendChart from './components/TrendChart';
 import Controls from './components/Controls';
+import Disclaimer from './components/Disclaimer';
+import ContactForm from './components/ContactForm';
 import { budgets, drillDown, schoolBudgets } from './data';
 import { useTheme } from './hooks/useTheme';
 import { useTrendData } from './hooks/useTrendData';
@@ -79,14 +81,23 @@ function App() {
           </button>
         </div>
       </header>
-      <Controls
-        view={view} onViewChange={setView}
-        year={year} type={type} source={source}
-        onYearChange={setYear} onTypeChange={setType} onSourceChange={handleSourceChange}
-        fund={fund} onFundChange={setFund}
-      />
+      {view !== 'disclaimer' && view !== 'contact' && (
+        <Controls
+          view={view} onViewChange={setView}
+          year={year} type={type} source={source}
+          onYearChange={setYear} onTypeChange={setType} onSourceChange={handleSourceChange}
+          fund={fund} onFundChange={setFund}
+        />
+      )}
       <main>
-        {view === 'budget' && source === 'school' && !hasSchoolData ? (
+        {view === 'disclaimer' ? (
+          <Disclaimer
+            onContact={() => setView('contact')}
+            onBack={() => setView('budget')}
+          />
+        ) : view === 'contact' ? (
+          <ContactForm onBack={() => setView('budget')} />
+        ) : view === 'budget' && source === 'school' && !hasSchoolData ? (
           <p className="no-data-message">No school budget data available for {year}.</p>
         ) : view === 'budget' && source !== 'school' && !hasBoroughData ? (
           <p className="no-data-message">No borough budget data available for {year}.</p>
@@ -118,6 +129,11 @@ function App() {
           />
         )}
       </main>
+      <footer>
+        <button className="footer-link" onClick={() => setView('disclaimer')}>Disclaimer</button>
+        <span className="footer-sep">·</span>
+        <button className="footer-link" onClick={() => setView('contact')}>Report a Discrepancy</button>
+      </footer>
     </div>
   );
 }
