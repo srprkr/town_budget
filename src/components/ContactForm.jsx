@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Disclaimer.css';
 
 const FORMSPREE_ID = 'xjgdkkyk';
@@ -21,6 +21,12 @@ export default function ContactForm({ onBack }) {
   const [budget, setBudget] = useState('borough');
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
+
+  const headingRef = useRef(null);
+  const successRef = useRef(null);
+
+  useEffect(() => { headingRef.current?.focus(); }, []);
+  useEffect(() => { if (status === 'success') successRef.current?.focus(); }, [status]);
 
   function handlePurposeChange(next) {
     setPurpose(next);
@@ -61,7 +67,7 @@ export default function ContactForm({ onBack }) {
       <div className="page-content">
         <button className="page-back" onClick={onBack}>← Back to Budget</button>
         <div className="form-success">
-          <h2>{msg.heading}</h2>
+          <h2 ref={successRef} tabIndex={-1}>{msg.heading}</h2>
           <p>{msg.body}</p>
         </div>
       </div>
@@ -73,9 +79,9 @@ export default function ContactForm({ onBack }) {
   return (
     <div className="page-content">
       <button className="page-back" onClick={onBack}>← Back to Budget</button>
-      <h2>{isPdf ? 'Submit a Budget PDF' : 'Report a Discrepancy'}</h2>
+      <h2 ref={headingRef} tabIndex={-1}>{isPdf ? 'Submit a Budget PDF' : 'Report a Discrepancy'}</h2>
 
-      <div className="form-purpose-toggle">
+      <div className="form-purpose-toggle" role="group" aria-label="Form purpose">
         <button
           type="button"
           className={`badge${!isPdf ? ' active' : ''}`}
@@ -101,18 +107,18 @@ export default function ContactForm({ onBack }) {
       <form onSubmit={handleSubmit} className="form-fields">
         <div className="form-row">
           <div className="form-field">
-            <span className="form-label">Name</span>
-            <input type="text" name="name" placeholder="Optional" />
+            <label className="form-label" htmlFor="contact-name">Name</label>
+            <input type="text" id="contact-name" name="name" placeholder="Optional" />
           </div>
           <div className="form-field">
-            <span className="form-label">Email</span>
-            <input type="email" name="email" placeholder="For follow-up" required />
+            <label className="form-label" htmlFor="contact-email">Email</label>
+            <input type="email" id="contact-email" name="email" placeholder="For follow-up" required />
           </div>
         </div>
 
         <div className="form-field">
-          <span className="form-label">Budget</span>
-          <div className="badges">
+          <span id="budget-group-label" className="form-label">Budget</span>
+          <div className="badges" role="group" aria-labelledby="budget-group-label">
             <button
               type="button"
               className={`badge${budget === 'borough' ? ' active' : ''}`}
@@ -133,9 +139,10 @@ export default function ContactForm({ onBack }) {
         {isPdf ? (
           <>
             <div className="form-field">
-              <span className="form-label">Year</span>
+              <label className="form-label" htmlFor="pdf-year">Year</label>
               <input
                 type="number"
+                id="pdf-year"
                 name="year"
                 placeholder="e.g. 2015"
                 min="2000"
@@ -145,9 +152,13 @@ export default function ContactForm({ onBack }) {
             </div>
 
             <div className="form-field">
-              <span className="form-label">PDF Link <span className="form-label-required">*</span></span>
+              <label className="form-label" htmlFor="pdf-url">
+                PDF Link{' '}
+                <span className="form-label-required" aria-hidden="true">*</span>
+              </label>
               <input
                 type="url"
+                id="pdf-url"
                 name="pdf_url"
                 placeholder="https://…"
                 required
@@ -155,17 +166,19 @@ export default function ContactForm({ onBack }) {
             </div>
 
             <div className="form-field">
-              <span className="form-label">Source Website</span>
+              <label className="form-label" htmlFor="source-url">Source Website</label>
               <input
                 type="url"
+                id="source-url"
                 name="source_url"
                 placeholder="https://… — the website where this PDF is published"
               />
             </div>
 
             <div className="form-field">
-              <span className="form-label">Notes</span>
+              <label className="form-label" htmlFor="pdf-notes">Notes</label>
               <textarea
+                id="pdf-notes"
                 name="description"
                 placeholder="If you didn't include a source website, please describe where this PDF comes from and how you obtained it."
               />
@@ -175,8 +188,8 @@ export default function ContactForm({ onBack }) {
           <>
             <div className="form-row">
               <div className="form-field">
-                <span className="form-label">Year</span>
-                <select name="year" required defaultValue="">
+                <label className="form-label" htmlFor="disc-year">Year</label>
+                <select id="disc-year" name="year" required defaultValue="">
                   <option value="" disabled>Select year</option>
                   {YEARS.map(y => (
                     <option key={y} value={y}>{y}</option>
@@ -184,19 +197,20 @@ export default function ContactForm({ onBack }) {
                 </select>
               </div>
               <div className="form-field">
-                <span className="form-label">PDF Page</span>
-                <input type="number" name="page" placeholder="Optional" min="1" />
+                <label className="form-label" htmlFor="disc-page">PDF Page</label>
+                <input type="number" id="disc-page" name="page" placeholder="Optional" min="1" />
               </div>
             </div>
 
             <div className="form-field">
-              <span className="form-label">Line Item / Category</span>
-              <input type="text" name="line_item" placeholder="Optional — e.g. Police Department, Debt Service" />
+              <label className="form-label" htmlFor="disc-line-item">Line Item / Category</label>
+              <input type="text" id="disc-line-item" name="line_item" placeholder="Optional — e.g. Police Department, Debt Service" />
             </div>
 
             <div className="form-field">
-              <span className="form-label">Description</span>
+              <label className="form-label" htmlFor="disc-description">Description</label>
               <textarea
+                id="disc-description"
                 name="description"
                 placeholder="What does the site show, and what should it be?"
                 required
@@ -209,7 +223,7 @@ export default function ContactForm({ onBack }) {
           <button type="submit" className="form-submit" disabled={status === 'submitting'}>
             {status === 'submitting' ? 'Sending…' : isPdf ? 'Submit PDF' : 'Submit Report'}
           </button>
-          {error && <p className="form-error">{error}</p>}
+          {error && <p className="form-error" role="alert">{error}</p>}
         </div>
       </form>
     </div>

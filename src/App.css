@@ -187,6 +187,13 @@ header h1 {
     color: var(--bg);
   }
 
+  &.icon-badge {
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   &.badge-more {
     border-style: dashed;
     opacity: 0.65;

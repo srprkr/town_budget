@@ -5,7 +5,6 @@ const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016]
 const BUDGET_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
 const TREND_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures'], ['balance', 'Surplus / Deficit']];
 const SOURCES = [['borough', 'Borough'], ['school', 'School'], ['all', 'All']];
-const VIEWS = [['budget', 'Budget'], ['trends', 'Trends']];
 const INITIAL_VISIBLE = 5;
 
 const TOP_CLOSED = [3, 8, 21, 8];
@@ -80,15 +79,27 @@ const Controls = ({
       <div className="controls-header" onClick={() => setOpen(o => !o)}>
         <span className="controls-summary">Filters</span>
         <div className="badges" onClick={e => e.stopPropagation()}>
-          {VIEWS.map(([val, label]) => (
-            <button
-              key={val}
-              className={`badge ${view === val ? 'active' : ''}`}
-              onClick={() => handleViewChange(val)}
-            >
-              {label}
-            </button>
-          ))}
+          <button
+            className={`badge icon-badge ${view === 'budget' ? 'active' : ''}`}
+            onClick={() => handleViewChange('budget')}
+            aria-label="Budget view"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" width="15" height="15" aria-hidden="true">
+              <path fill="currentColor" d="M0 7.49996C0 3.52583 3.09098 0.27365 7 0.0163574V4.0354C5.30385 4.27801 4 5.73672 4 7.49996C4 9.43295 5.567 11 7.5 11C8.28618 11 9.01181 10.7407 9.5961 10.3031L12.438 13.1451C11.1188 14.3 9.39113 15 7.5 15C3.35786 15 0 11.6421 0 7.49996Z"/>
+              <path fill="currentColor" d="M13.1451 12.438C14.3001 11.1187 15 9.39107 15 7.49996C15 6.46644 14.7909 5.48175 14.4128 4.58586L10.7552 6.21147C10.9132 6.61024 11 7.04496 11 7.49996C11 8.28611 10.7408 9.01174 10.3032 9.59602L13.1451 12.438Z"/>
+              <path fill="currentColor" d="M8 4.0354V0.0163574C10.5416 0.183645 12.7373 1.61699 13.9626 3.69166L10.2541 5.33986C9.71063 4.64791 8.91203 4.16585 8 4.0354Z"/>
+            </svg>
+          </button>
+          <button
+            className={`badge icon-badge ${view === 'trends' ? 'active' : ''}`}
+            onClick={() => handleViewChange('trends')}
+            aria-label="Trends view"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="16" height="16" aria-hidden="true">
+              <polyline points="224 208 32 208 32 48" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="24"/>
+              <polyline points="224 96 160 152 96 104 32 160" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="24"/>
+            </svg>
+          </button>
         </div>
         <button
           className="controls-toggle"

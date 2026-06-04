@@ -1,12 +1,16 @@
+import { useEffect, useRef } from 'react';
 import './Disclaimer.css';
 
 export default function Disclaimer({ onContact, onBack }) {
+  const headingRef = useRef(null);
+  useEffect(() => { headingRef.current?.focus(); }, []);
+
   return (
     <div className="page-content">
       <button className="page-back" onClick={onBack}>
         ← Back to Budget
       </button>
-      <h2>About This Data</h2>
+      <h2 ref={headingRef} tabIndex={-1}>About This Data</h2>
       <p>
         The figures on this site were sourced directly from official Borough of Jenkintown
         and Jenkintown School District budget documents — the same PDFs published by each
