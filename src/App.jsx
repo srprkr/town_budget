@@ -89,7 +89,7 @@ function App() {
           fund={fund} onFundChange={setFund}
         />
       )}
-      <main>
+      <main className={view === 'disclaimer' || view === 'contact' ? 'page-main' : ''}>
         {view === 'disclaimer' ? (
           <Disclaimer
             onContact={() => setView('contact')}

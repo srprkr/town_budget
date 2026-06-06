@@ -8,7 +8,11 @@ export default function Disclaimer({ onContact, onBack }) {
   return (
     <div className="page-content">
       <button className="page-back" onClick={onBack}>
-        ← Back to Budget
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path className="bar" d="M 16 3 L 8 12" />
+          <path className="bar" d="M 8 12 L 16 21" />
+        </svg>
+        Back to Budget
       </button>
       <h2 ref={headingRef} tabIndex={-1}>About This Data</h2>
       <p>

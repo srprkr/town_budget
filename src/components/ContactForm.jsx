@@ -65,7 +65,13 @@ export default function ContactForm({ onBack }) {
     const msg = SUCCESS_MESSAGES[purpose];
     return (
       <div className="page-content">
-        <button className="page-back" onClick={onBack}>← Back to Budget</button>
+        <button className="page-back" onClick={onBack}>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path className="bar" d="M 16 3 L 8 12" />
+            <path className="bar" d="M 8 12 L 16 21" />
+          </svg>
+          Back to Budget
+        </button>
         <div className="form-success">
           <h2 ref={successRef} tabIndex={-1}>{msg.heading}</h2>
           <p>{msg.body}</p>
@@ -78,7 +84,13 @@ export default function ContactForm({ onBack }) {
 
   return (
     <div className="page-content">
-      <button className="page-back" onClick={onBack}>← Back to Budget</button>
+      <button className="page-back" onClick={onBack}>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path className="bar" d="M 16 3 L 8 12" />
+          <path className="bar" d="M 8 12 L 16 21" />
+        </svg>
+        Back to Budget
+      </button>
       <h2 ref={headingRef} tabIndex={-1}>{isPdf ? 'Submit a Budget PDF' : 'Report a Discrepancy'}</h2>
 
       <div className="form-purpose-toggle" role="group" aria-label="Form purpose">

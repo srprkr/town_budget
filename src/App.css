@@ -222,6 +222,10 @@ main {
   align-items: center;
 }
 
+main.page-main {
+  align-items: flex-start;
+}
+
 footer {
   padding: 16px 24px;
   border-top: 1px solid var(--border);
