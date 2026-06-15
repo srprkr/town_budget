@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { TREND_FUNDS } from '../data/trends';
+import { AUDIT_YEARS } from '../data/auditData';
 
 const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016];
 const BUDGET_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
@@ -100,6 +101,20 @@ const Controls = ({
               <polyline points="224 96 160 152 96 104 32 160" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="24"/>
             </svg>
           </button>
+          <button
+            className={`badge icon-badge ${view === 'compare' ? 'active' : ''}`}
+            onClick={() => handleViewChange('compare')}
+            aria-label="Compare view"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="16" height="16" aria-hidden="true">
+              <line x1="40" y1="208" x2="216" y2="208" stroke="currentColor" strokeLinecap="round" strokeWidth="20"/>
+              <line x1="40" y1="40" x2="40" y2="208" stroke="currentColor" strokeLinecap="round" strokeWidth="20"/>
+              <rect x="60" y="128" width="30" height="80" rx="3" fill="currentColor"/>
+              <rect x="96" y="80" width="30" height="128" rx="3" fill="currentColor"/>
+              <rect x="150" y="152" width="30" height="56" rx="3" fill="currentColor"/>
+              <rect x="186" y="104" width="30" height="104" rx="3" fill="currentColor"/>
+            </svg>
+          </button>
         </div>
         <button
           className="controls-toggle"
@@ -158,6 +173,21 @@ const Controls = ({
                 </div>
               </div>
             </>
+          ) : view === 'compare' ? (
+            <div className="control-row">
+              <span className="control-label">Year</span>
+              <div className="badges">
+                {AUDIT_YEARS.map(y => (
+                  <button
+                    key={y}
+                    className={`badge ${year === y ? 'active' : ''}`}
+                    onClick={() => onYearChange(y)}
+                  >
+                    {y}
+                  </button>
+                ))}
+              </div>
+            </div>
           ) : (
             <>
               <div className="control-row">

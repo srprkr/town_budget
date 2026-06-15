@@ -1,12 +1,14 @@
 import { useState, useRef } from 'react';
 import BudgetChart from './components/BudgetChart';
 import TrendChart from './components/TrendChart';
+import CompareChart from './components/CompareChart';
 import Controls from './components/Controls';
 import Disclaimer from './components/Disclaimer';
 import ContactForm from './components/ContactForm';
 import { budgets, drillDown, schoolBudgets } from './data';
 import { useTheme } from './hooks/useTheme';
 import { useTrendData } from './hooks/useTrendData';
+import { AUDIT_YEARS } from './data/auditData';
 import './App.css';
 
 function App() {
@@ -18,6 +20,13 @@ function App() {
   const { theme, toggle } = useTheme();
   const [drilledFromAll, setDrilledFromAll] = useState(false);
   const chartBackRef = useRef(null);
+
+  const handleViewChange = (newView) => {
+    setView(newView);
+    if (newView === 'compare' && !AUDIT_YEARS.includes(year)) {
+      setYear(AUDIT_YEARS[0]);
+    }
+  };
 
   const handleSourceChange = (newSource) => {
     if (newSource === 'all' && drilledFromAll && chartBackRef.current) {
@@ -83,7 +92,7 @@ function App() {
       </header>
       {view !== 'disclaimer' && view !== 'contact' && (
         <Controls
-          view={view} onViewChange={setView}
+          view={view} onViewChange={handleViewChange}
           year={year} type={type} source={source}
           onYearChange={setYear} onTypeChange={setType} onSourceChange={handleSourceChange}
           fund={fund} onFundChange={setFund}
@@ -101,6 +110,8 @@ function App() {
           <p className="no-data-message">No school budget data available for {year}.</p>
         ) : view === 'budget' && source !== 'school' && !hasBoroughData ? (
           <p className="no-data-message">No borough budget data available for {year}.</p>
+        ) : view === 'compare' ? (
+          <CompareChart year={year} />
         ) : view === 'budget' ? (
           <BudgetChart
             data={chartData}
