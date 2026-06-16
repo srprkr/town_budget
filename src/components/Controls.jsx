@@ -6,7 +6,7 @@ const YEARS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016]
 const BUDGET_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures']];
 const TREND_TYPES = [['revenue', 'Revenue'], ['expenditure', 'Expenditures'], ['balance', 'Surplus / Deficit']];
 const SOURCES = [['borough', 'Borough'], ['school', 'School'], ['all', 'All']];
-const INITIAL_VISIBLE = 5;
+const INITIAL_VISIBLE = 8;
 
 const TOP_CLOSED = [3, 8, 21, 8];
 const TOP_OPEN   = [3, 16, 12, 8];
@@ -60,6 +60,7 @@ const Controls = ({
 }) => {
   const [open, setOpen] = useState(() => !window.matchMedia('(max-width: 768px)').matches);
   const [expanded, setExpanded] = useState(false);
+  const [yearsExpanded, setYearsExpanded] = useState(false);
 
   const visible = expanded ? TREND_FUNDS : TREND_FUNDS.slice(0, INITIAL_VISIBLE);
   const hiddenCount = TREND_FUNDS.length - INITIAL_VISIBLE;
@@ -167,13 +168,28 @@ const Controls = ({
               <div className="control-row">
                 <span className="control-label">Year</span>
                 <div className="badges">
-                  {(dataMode === 'actual' ? AUDIT_YEARS : YEARS).map(y => (
+                  {(dataMode === 'actual'
+                    ? (yearsExpanded ? AUDIT_YEARS : AUDIT_YEARS.slice(0, INITIAL_VISIBLE))
+                    : YEARS
+                  ).map(y => (
                     <button
                       key={y}
                       className={`badge ${year === y ? 'active' : ''}`}
                       onClick={() => onYearChange(y)}
                     >
                       {y}
+                    </button>
+                  ))}
+                  {dataMode === 'actual' && (!yearsExpanded ? (
+                    <button className="badge badge-more" onClick={() => setYearsExpanded(true)}>
+                      Show {AUDIT_YEARS.length - INITIAL_VISIBLE} More
+                    </button>
+                  ) : (
+                    <button className="badge badge-more" onClick={() => {
+                      setYearsExpanded(false);
+                      if (AUDIT_YEARS.indexOf(year) >= INITIAL_VISIBLE) onYearChange(AUDIT_YEARS[0]);
+                    }}>
+                      Show Less
                     </button>
                   ))}
                 </div>
@@ -199,7 +215,7 @@ const Controls = ({
             <div className="control-row">
               <span className="control-label">Year</span>
               <div className="badges">
-                {AUDIT_YEARS.map(y => (
+                {(yearsExpanded ? AUDIT_YEARS : AUDIT_YEARS.slice(0, INITIAL_VISIBLE)).map(y => (
                   <button
                     key={y}
                     className={`badge ${year === y ? 'active' : ''}`}
@@ -208,6 +224,18 @@ const Controls = ({
                     {y}
                   </button>
                 ))}
+                {!yearsExpanded ? (
+                  <button className="badge badge-more" onClick={() => setYearsExpanded(true)}>
+                    Show {AUDIT_YEARS.length - INITIAL_VISIBLE} More
+                  </button>
+                ) : (
+                  <button className="badge badge-more" onClick={() => {
+                    setYearsExpanded(false);
+                    if (AUDIT_YEARS.indexOf(year) >= INITIAL_VISIBLE) onYearChange(AUDIT_YEARS[0]);
+                  }}>
+                    Show Less
+                  </button>
+                )}
               </div>
             </div>
           ) : (

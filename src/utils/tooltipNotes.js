@@ -1,7 +1,7 @@
-const BENEFITS_ANOMALY_YEARS = new Set([2018, 2022, 2023]);
+const BENEFITS_ANOMALY_YEARS = new Set([2012, 2018, 2022, 2023]);
 const SEWER_CAPITAL_DELAY_YEARS = new Set([2020, 2021]);
 const SEWER_CAPITAL_GRANT_YEARS = new Set([2018, 2019]);
-const FIRE_APPARATUS_YEARS = new Set([2016, 2018, 2019]);
+const FIRE_APPARATUS_YEARS = new Set([2012, 2016, 2018, 2019]);
 const DEBT_REFINANCING_YEARS = new Set([2015]);
 const GEN_GOV_ANOMALY_YEARS = new Set([2015]);
 
@@ -19,6 +19,7 @@ export function getTooltipNote(name, year) {
     if (year === 2019) return 'Includes ~$881K capital purchase of a new fire truck; recurring fire costs are closer to $220K.';
     if (year === 2018) return 'Includes ~$352K fire apparatus capital expenditure; recurring fire costs are closer to $200K.';
     if (year === 2016) return 'Includes ~$105K fire apparatus capital expenditure; recurring fire costs are closer to $195K.';
+    if (year === 2012) return 'Includes ~$272K fire apparatus capital expenditure; recurring fire costs are closer to $36K.';
   }
   if (name === 'Debt Service' && DEBT_REFINANCING_YEARS.has(year)) {
     return 'Includes ~$2.9M in debt principal from a bond refinancing; not representative of typical annual debt service.';
