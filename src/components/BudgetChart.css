@@ -35,6 +35,11 @@ svg:active {
   box-shadow: var(--shadow);
   font-size: 13px;
   color: var(--text-h);
+}
+
+.tooltip-name,
+.tooltip-value,
+.tooltip-percent {
   white-space: nowrap;
 }
 
@@ -54,6 +59,17 @@ svg:active {
 .tooltip-percent {
   font-size: 12px;
   color: var(--text);
+}
+
+.tooltip-note {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-muted, #aaa);
+  white-space: normal;
+  max-width: 220px;
+  line-height: 1.4;
+  border-top: 1px solid var(--border);
+  padding-top: 5px;
 }
 
 .tooltip-drill-icon {

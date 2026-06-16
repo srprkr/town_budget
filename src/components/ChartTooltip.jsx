@@ -14,6 +14,7 @@ const ChartTooltip = ({ tooltip }) => {
       <div className="tooltip-name">{tooltip.name}</div>
       <div className="tooltip-value">${tooltip.value}</div>
       <div className="tooltip-percent">{tooltip.percent}%</div>
+      {tooltip.note && <div className="tooltip-note">{tooltip.note}</div>}
     </div>
   );
 };

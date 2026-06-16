@@ -13,17 +13,21 @@ const ARC_LABEL_MAX = 20;
 
 const EMPTY_DRILL = {};
 
-export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onSegmentClick, onDrillIn, onBack }) {
+const BENEFITS_ANOMALY_YEARS = new Set([2022, 2023]);
+
+export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onSegmentClick, onDrillIn, onBack, year }) {
   const drillDownData = drillDownProp ?? EMPTY_DRILL;
   const onSegmentClickRef = useRef(onSegmentClick);
   const onDrillInRef = useRef(onDrillIn);
   const onBackRef = useRef(onBack);
   const drillDownDataRef = useRef(drillDownData);
+  const yearRef = useRef(year);
   useLayoutEffect(() => {
     onSegmentClickRef.current = onSegmentClick;
     onDrillInRef.current = onDrillIn;
     onBackRef.current = onBack;
     drillDownDataRef.current = drillDownData;
+    yearRef.current = year;
   });
   const suppressRedrawRef = useRef(false);
   const drillRef = useRef({ history: [], labelHistory: [], animating: false, drillBack: null, drilledFund: null });
@@ -130,6 +134,13 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
       }
     }
 
+    function tooltipNote(name) {
+      if (name === 'Employee Benefits' && BENEFITS_ANOMALY_YEARS.has(yearRef.current)) {
+        return 'Includes pension fund activity (fiduciary) in the DCED totals, inflating this figure vs. other years.';
+      }
+      return null;
+    }
+
     let touchTimer = null;
     let hideTimer = null;
 
@@ -174,6 +185,7 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
             x: event.clientX - rect.left,
             y: event.clientY - rect.top,
             drillable: isActionable(d),
+            note: tooltipNote(d.data.name),
           });
         })
         .on('mousemove', event => {
@@ -203,6 +215,7 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
               x: touch.clientX - rect.left,
               y: touch.clientY - rect.top,
               drillable: isActionable(d),
+              note: tooltipNote(d.data.name),
             });
             hideTimer = setTimeout(() => setTooltip(null), TOOLTIP_HIDE_MS);
           }, LONG_PRESS_MS);

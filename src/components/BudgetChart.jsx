@@ -10,7 +10,7 @@ const HEIGHT = 700;
 
 const BudgetChart = ({ data, title, drillDownData, onSegmentClick, onDrillIn, onBack, backRef, source, year, noDetail, hintLine }) => {
   const svgRef = useRef();
-  const { breadcrumb, tooltip, triggerBack } = useBudgetChart({ svgRef, data, drillDownData, onSegmentClick, onDrillIn, onBack });
+  const { breadcrumb, tooltip, triggerBack } = useBudgetChart({ svgRef, data, drillDownData, onSegmentClick, onDrillIn, onBack, year });
   useLayoutEffect(() => { if (backRef) backRef.current = triggerBack; });
 
   const titleId = 'budget-chart-title';
