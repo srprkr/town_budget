@@ -10,7 +10,7 @@ const BUDGET_OPACITY = 0.42;
 const W = 800;
 
 // Category view dimensions
-const C_MAR = { top: 24, right: 16, bottom: 62, left: 152 };
+const C_MAR = { top: 24, right: 36, bottom: 62, left: 152 };
 const C_H = 500;
 const C_IW = W - C_MAR.left - C_MAR.right;
 const C_IH = C_H - C_MAR.top - C_MAR.bottom;
