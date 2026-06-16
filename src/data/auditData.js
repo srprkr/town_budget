@@ -1,7 +1,7 @@
 // Actual expenditures from DCED CLGS-30 Annual Audit & Financial Report (Memorandum Only totals).
 // Categories follow DCED functional classification, not the borough's fund-based budget structure.
 
-export const AUDIT_YEARS = [2025, 2024];
+export const AUDIT_YEARS = [2025, 2024, 2023];
 
 export const COMPARE_CATEGORIES = [
   'General Government',
@@ -17,6 +17,18 @@ export const COMPARE_CATEGORIES = [
 ];
 
 export const auditActuals = {
+  2023: {
+    'General Government': 672597,
+    'Police': 1933499,
+    'Fire': 221667,
+    'Planning & Zoning': 270543,
+    'Public Works': 951943,
+    'Solid Waste': 425993,
+    'Sewer / Wastewater': 419468,
+    'Libraries': 244053,
+    'Employee Benefits': 1301984,
+    'Debt Service': 864252,
+  },
   2024: {
     'General Government': 787104,
     'Police': 2005712,
@@ -46,6 +58,23 @@ export const auditActuals = {
 // Borough approved budget expenditures mapped to DCED functional categories.
 // Approximate — the borough budget uses fund-based categories; see source/audits/ for methodology.
 export const budgetMapped = {
+  2023: {
+    // Admin $560,271 + Reserve & Misc $190,880
+    'General Government': 751151,
+    'Police': 1763317,
+    // Fire Protection Fund total
+    'Fire': 191234,
+    'Planning & Zoning': 188971,
+    // GF Public Works $350,694 + Street Tax Fund $115,960 + State Liquid Fuels $263,652
+    'Public Works': 730306,
+    'Solid Waste': 492051,
+    'Sewer / Wastewater': 820615,
+    'Libraries': 231996,
+    // GF Employee Benefits only
+    'Employee Benefits': 699275,
+    // Debt Service Fund $260,175 + GF Debt Service $360,500
+    'Debt Service': 620675,
+  },
   2024: {
     // Admin $485,789 + Reserve & Misc $386,237
     'General Government': 872026,

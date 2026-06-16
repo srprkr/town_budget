@@ -56,6 +56,7 @@ const Controls = ({
   view, onViewChange,
   year, type, source, onYearChange, onTypeChange, onSourceChange,
   fund, onFundChange,
+  dataMode, onDataModeChange,
 }) => {
   const [open, setOpen] = useState(() => !window.matchMedia('(max-width: 768px)').matches);
   const [expanded, setExpanded] = useState(false);
@@ -131,23 +132,42 @@ const Controls = ({
           {view === 'budget' ? (
             <>
               <div className="control-row">
-                <span className="control-label">Source</span>
+                <span className="control-label">Data</span>
                 <div className="badges">
-                  {SOURCES.map(([val, label]) => (
-                    <button
-                      key={val}
-                      className={`badge ${source === val ? 'active' : ''}`}
-                      onClick={() => onSourceChange(val)}
-                    >
-                      {label}
-                    </button>
-                  ))}
+                  <button
+                    className={`badge ${dataMode === 'budget' ? 'active' : ''}`}
+                    onClick={() => onDataModeChange('budget')}
+                  >
+                    Budget
+                  </button>
+                  <button
+                    className={`badge ${dataMode === 'actual' ? 'active' : ''}`}
+                    onClick={() => onDataModeChange('actual')}
+                  >
+                    Actual
+                  </button>
                 </div>
               </div>
+              {dataMode === 'budget' && (
+                <div className="control-row">
+                  <span className="control-label">Source</span>
+                  <div className="badges">
+                    {SOURCES.map(([val, label]) => (
+                      <button
+                        key={val}
+                        className={`badge ${source === val ? 'active' : ''}`}
+                        onClick={() => onSourceChange(val)}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="control-row">
                 <span className="control-label">Year</span>
                 <div className="badges">
-                  {YEARS.map(y => (
+                  {(dataMode === 'actual' ? AUDIT_YEARS : YEARS).map(y => (
                     <button
                       key={y}
                       className={`badge ${year === y ? 'active' : ''}`}
@@ -158,20 +178,22 @@ const Controls = ({
                   ))}
                 </div>
               </div>
-              <div className="control-row">
-                <span className="control-label">Type</span>
-                <div className="badges">
-                  {BUDGET_TYPES.map(([val, label]) => (
-                    <button
-                      key={val}
-                      className={`badge ${type === val ? 'active' : ''}`}
-                      onClick={() => onTypeChange(val)}
-                    >
-                      {label}
-                    </button>
-                  ))}
+              {dataMode === 'budget' && (
+                <div className="control-row">
+                  <span className="control-label">Type</span>
+                  <div className="badges">
+                    {BUDGET_TYPES.map(([val, label]) => (
+                      <button
+                        key={val}
+                        className={`badge ${type === val ? 'active' : ''}`}
+                        onClick={() => onTypeChange(val)}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           ) : view === 'compare' ? (
             <div className="control-row">

@@ -8,7 +8,7 @@ import ContactForm from './components/ContactForm';
 import { budgets, drillDown, schoolBudgets } from './data';
 import { useTheme } from './hooks/useTheme';
 import { useTrendData } from './hooks/useTrendData';
-import { AUDIT_YEARS } from './data/auditData';
+import { AUDIT_YEARS, COMPARE_CATEGORIES, auditActuals } from './data/auditData';
 import './App.css';
 
 function App() {
@@ -19,11 +19,19 @@ function App() {
   const [source, setSource] = useState('borough');
   const { theme, toggle } = useTheme();
   const [drilledFromAll, setDrilledFromAll] = useState(false);
+  const [dataMode, setDataMode] = useState('budget');
   const chartBackRef = useRef(null);
 
   const handleViewChange = (newView) => {
     setView(newView);
     if (newView === 'compare' && !AUDIT_YEARS.includes(year)) {
+      setYear(AUDIT_YEARS[0]);
+    }
+  };
+
+  const handleDataModeChange = (mode) => {
+    setDataMode(mode);
+    if (mode === 'actual' && !AUDIT_YEARS.includes(year)) {
       setYear(AUDIT_YEARS[0]);
     }
   };
@@ -96,6 +104,7 @@ function App() {
           year={year} type={type} source={source}
           onYearChange={setYear} onTypeChange={setType} onSourceChange={handleSourceChange}
           fund={fund} onFundChange={setFund}
+          dataMode={dataMode} onDataModeChange={handleDataModeChange}
         />
       )}
       <main className={view === 'disclaimer' || view === 'contact' ? 'page-main' : ''}>
@@ -106,6 +115,14 @@ function App() {
           />
         ) : view === 'contact' ? (
           <ContactForm onBack={() => setView('budget')} />
+        ) : view === 'budget' && dataMode === 'actual' ? (
+          <BudgetChart
+            data={COMPARE_CATEGORIES.map(cat => ({ name: cat, value: auditActuals[year]?.[cat] ?? 0 }))}
+            title={`${year} Audited Actual Expenditures`}
+            source="actual"
+            year={year}
+            hintLine="Scroll to zoom · Double-click to reset zoom"
+          />
         ) : view === 'budget' && source === 'school' && !hasSchoolData ? (
           <p className="no-data-message">No school budget data available for {year}.</p>
         ) : view === 'budget' && source !== 'school' && !hasBoroughData ? (

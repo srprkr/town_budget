@@ -3,22 +3,26 @@ const SCHOOL_SOURCES = {
   2026: 'https://jenkintowndrakes.org/wp-content/uploads/2025/05/2025-26-Budget-3.10.25-updated.pdf',
 };
 
-const ChartHint = ({ breadcrumb, source, year, noDetail }) => {
+const ChartHint = ({ breadcrumb, source, year, noDetail, hintLine }) => {
   const schoolUrl = SCHOOL_SOURCES[year];
-  const showBorough = source !== 'school';
-  const showSchool = source !== 'borough' && schoolUrl;
+  const isActual = source === 'actual';
+  const showBorough = !isActual && source !== 'school';
+  const showSchool = !isActual && source !== 'borough' && schoolUrl;
+
+  const defaultHint = noDetail
+    ? 'Fund detail not available for 2016 · Shows property tax allocation only · Scroll to zoom · Double-click to reset zoom'
+    : breadcrumb.length === 0
+      ? 'Click a fund to drill down · Scroll to zoom · Double-click to reset zoom'
+      : `Viewing: ${breadcrumb[breadcrumb.length - 1]} · Click center to return`;
 
   return (
     <div className="zoom-hint">
-      {noDetail
-        ? 'Fund detail not available for 2016 · Shows property tax allocation only · Scroll to zoom · Double-click to reset zoom'
-        : breadcrumb.length === 0
-          ? 'Click a fund to drill down · Scroll to zoom · Double-click to reset zoom'
-          : `Viewing: ${breadcrumb[breadcrumb.length - 1]} · Click center to return`}
+      {hintLine ?? defaultHint}
       <br />
       {showBorough && <a target="_blank" rel="noreferrer" href="https://jenkintownboro.com/budgets/">Borough source</a>}
       {showBorough && showSchool && ' · '}
       {showSchool && <a target="_blank" rel="noreferrer" href={schoolUrl}>School district source</a>}
+      {isActual && <a target="_blank" rel="noreferrer" href="https://jenkintownboro.com/budgets/">DCED Annual Audit</a>}
     </div>
   );
 };
