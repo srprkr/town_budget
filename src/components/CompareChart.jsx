@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useCompareChart } from '../hooks/useCompareChart';
-import { COMPARE_CATEGORIES, auditActuals, budgetMapped } from '../data/auditData';
+import { COMPARE_CATEGORIES, auditActuals, budgetMapped, BUDGET_MAPPED_YEARS } from '../data/auditData';
 import { fmtValue } from '../utils/format';
 import './CompareChart.css';
 
@@ -8,18 +8,23 @@ const CompareChart = ({ year }) => {
   const [tab, setTab] = useState('category');
   const [tooltip, setTooltip] = useState(null);
   const svgRef = useRef(null);
+  const hasBudgetData = BUDGET_MAPPED_YEARS.has(year);
   const actuals = auditActuals[year] ?? {};
   const budget = budgetMapped[year] ?? {};
 
-  useCompareChart({ svgRef, actuals, budget, mode: tab, setTooltip, year });
+  useCompareChart({ svgRef, actuals, budget, mode: tab, setTooltip, year, showBudget: hasBudgetData });
 
   const tooltipDiff = tooltip ? tooltip.actualVal - tooltip.budgetVal : 0;
 
   return (
     <div className="compare-wrap">
-      <p className="compare-title">{year} Budgeted vs. Audited Expenditures</p>
+      <p className="compare-title">
+        {hasBudgetData ? `${year} Budgeted vs. Audited Expenditures` : `${year} Audited Expenditures`}
+      </p>
       <p className="compare-note">
-        Budget figures are approximate — the borough budget uses fund-based categories while the independent audit uses DCED functional categories.
+        {hasBudgetData
+          ? 'Budget figures are approximate — the borough budget uses fund-based categories while the independent audit uses DCED functional categories.'
+          : `Detailed borough budget data is not available for ${year}; audited actuals only.`}
       </p>
       <div className="compare-tabs">
         <button
@@ -48,11 +53,11 @@ const CompareChart = ({ year }) => {
             style={{ position: 'absolute', left: tooltip.x + 12, top: tooltip.y + 12, pointerEvents: 'none', zIndex: 1000 }}
           >
             <div className="tooltip-name">{tooltip.cat}</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted, #aaa)', marginBottom: 2 }}>Budgeted: <span style={{ color: 'var(--text-h)', fontWeight: 600 }}>{fmtValue(tooltip.budgetVal)}</span></div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted, #aaa)', marginBottom: 4 }}>Actual: <span style={{ color: 'var(--text-h)', fontWeight: 600 }}>{fmtValue(tooltip.actualVal)}</span></div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: tooltipDiff > 0 ? '#ef4444' : '#22c55e' }}>
+            {hasBudgetData && <div style={{ fontSize: 12, color: 'var(--text-muted, #aaa)', marginBottom: 2 }}>Budgeted: <span style={{ color: 'var(--text-h)', fontWeight: 600 }}>{fmtValue(tooltip.budgetVal)}</span></div>}
+            <div style={{ fontSize: 12, color: 'var(--text-muted, #aaa)', marginBottom: hasBudgetData ? 4 : 0 }}>Actual: <span style={{ color: 'var(--text-h)', fontWeight: 600 }}>{fmtValue(tooltip.actualVal)}</span></div>
+            {hasBudgetData && <div style={{ fontSize: 12, fontWeight: 600, color: tooltipDiff > 0 ? '#ef4444' : '#22c55e' }}>
               {tooltipDiff >= 0 ? '+' : ''}{fmtValue(tooltipDiff)}
-            </div>
+            </div>}
             {tooltip.note && <div className="tooltip-note">{tooltip.note}</div>}
           </div>
         )}

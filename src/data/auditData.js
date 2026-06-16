@@ -1,7 +1,10 @@
 // Actual expenditures from DCED CLGS-30 Annual Audit & Financial Report (Memorandum Only totals).
 // Categories follow DCED functional classification, not the borough's fund-based budget structure.
 
-export const AUDIT_YEARS = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017];
+export const AUDIT_YEARS = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2013];
+
+// Years with full fund-level budget detail available for compare chart
+export const BUDGET_MAPPED_YEARS = new Set([2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]);
 
 export const COMPARE_CATEGORIES = [
   'General Government',
@@ -17,6 +20,42 @@ export const COMPARE_CATEGORIES = [
 ];
 
 export const auditActuals = {
+  2013: {
+    'General Government': 651189,
+    'Police': 1290331,
+    'Fire': 186026,
+    'Planning & Zoning': 34740,
+    'Public Works': 1599883,
+    'Solid Waste': 258929,
+    'Sewer / Wastewater': 230592,
+    'Libraries': 244794,
+    'Employee Benefits': 643052,
+    'Debt Service': 955710,
+  },
+  2015: {
+    'General Government': 1249375,
+    'Police': 1529176,
+    'Fire': 181987,
+    'Planning & Zoning': 101398,
+    'Public Works': 529449,
+    'Solid Waste': 300771,
+    'Sewer / Wastewater': 326514,
+    'Libraries': 231000,
+    'Employee Benefits': 718575,
+    'Debt Service': 2990597,
+  },
+  2016: {
+    'General Government': 565096,
+    'Police': 1580966,
+    'Fire': 300416,
+    'Planning & Zoning': 84135,
+    'Public Works': 1024735,
+    'Solid Waste': 284751,
+    'Sewer / Wastewater': 257238,
+    'Libraries': 239272,
+    'Employee Benefits': 787069,
+    'Debt Service': 310761,
+  },
   2017: {
     'General Government': 588008,
     'Police': 1598834,
