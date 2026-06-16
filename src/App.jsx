@@ -9,6 +9,7 @@ import { budgets, drillDown, schoolBudgets } from './data';
 import { useTheme } from './hooks/useTheme';
 import { useTrendData } from './hooks/useTrendData';
 import { AUDIT_YEARS, COMPARE_CATEGORIES, auditActuals } from './data/auditData';
+import { auditDrilldown } from './data/auditDrilldown';
 import './App.css';
 
 function App() {
@@ -119,16 +120,17 @@ function App() {
           <BudgetChart
             data={COMPARE_CATEGORIES.map(cat => ({ name: cat, value: auditActuals[year]?.[cat] ?? 0 }))}
             title={`${year} Audited Actual Expenditures`}
+            drillDownData={auditDrilldown[year]}
             source="actual"
             year={year}
-            hintLine="Scroll to zoom · Double-click to reset zoom"
+            hintLine={auditDrilldown[year] ? undefined : 'Scroll to zoom · Double-click to reset zoom'}
           />
         ) : view === 'budget' && source === 'school' && !hasSchoolData ? (
           <p className="no-data-message">No school budget data available for {year}.</p>
         ) : view === 'budget' && source !== 'school' && !hasBoroughData ? (
           <p className="no-data-message">No borough budget data available for {year}.</p>
         ) : view === 'compare' ? (
-          <CompareChart year={year} />
+          <CompareChart key={year} year={year} />
         ) : view === 'budget' ? (
           <BudgetChart
             data={chartData}

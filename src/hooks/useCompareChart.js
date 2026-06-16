@@ -21,14 +21,14 @@ const T_H = 210;
 const T_IW = W - T_MAR.left - T_MAR.right;
 const T_IH = T_H - T_MAR.top - T_MAR.bottom;
 
-export function useCompareChart({ svgRef, actuals, budget, mode = 'category', setTooltip, year, showBudget = true }) {
+export function useCompareChart({ svgRef, actuals, budget, mode = 'category', setTooltip, year, showBudget = true, onCategoryClick, isDrillable }) {
   useEffect(() => {
     if (!svgRef.current) return;
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
     if (mode === 'total') drawTotal(svg, actuals, budget, setTooltip, year, showBudget);
-    else drawCategory(svg, actuals, budget, setTooltip, year, showBudget);
-  }, [svgRef, actuals, budget, mode, setTooltip, year, showBudget]);
+    else drawCategory(svg, actuals, budget, setTooltip, year, showBudget, onCategoryClick, isDrillable);
+  }, [svgRef, actuals, budget, mode, setTooltip, year, showBudget, onCategoryClick, isDrillable]);
 }
 
 function makeTooltipHandlers(setTooltip, getData, year) {
@@ -56,7 +56,7 @@ function makeTooltipHandlers(setTooltip, getData, year) {
   };
 }
 
-function drawCategory(svg, actuals, budget, setTooltip, year, showBudget) {
+function drawCategory(svg, actuals, budget, setTooltip, year, showBudget, onCategoryClick, isDrillable) {
   const g = svg.append('g').attr('transform', `translate(${C_MAR.left},${C_MAR.top})`);
 
   const yScale = d3.scaleBand()
@@ -117,10 +117,15 @@ function drawCategory(svg, actuals, budget, setTooltip, year, showBudget) {
     .enter().append('g')
     .attr('class', 'bar-group')
     .attr('transform', d => `translate(0,${yScale(d)})`)
-    .style('cursor', setTooltip ? 'default' : null)
+    .style('cursor', d => (isDrillable?.(d) ? 'pointer' : (setTooltip ? 'default' : null)))
     .on('mouseenter', handlers.mouseenter ?? null)
     .on('mousemove', handlers.mousemove ?? null)
     .on('mouseleave', handlers.mouseleave ?? null);
+
+  if (onCategoryClick) {
+    groups.filter(d => isDrillable?.(d) ?? true)
+      .on('click', (event, d) => onCategoryClick(d));
+  }
 
   if (showBudget) {
     groups.append('rect')
@@ -238,15 +243,6 @@ function drawTotal(svg, actuals, budget, setTooltip, year, showBudget) {
       .attr('fill', 'var(--text-muted, #888)')
       .attr('font-size', '13px')
       .text(fmtValue(budgetTotal));
-
-    g.append('text')
-      .attr('x', T_IW / 2)
-      .attr('y', T_IH + 36)
-      .attr('text-anchor', 'middle')
-      .attr('fill', diff > 0 ? RED : GREEN)
-      .attr('font-size', '13px')
-      .attr('font-weight', '600')
-      .text(`${diff >= 0 ? '+' : ''}${fmtValue(diff)} vs. budget`);
   }
 
   g.append('text')

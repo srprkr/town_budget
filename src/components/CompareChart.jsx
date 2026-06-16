@@ -1,20 +1,42 @@
 import { useRef, useState } from 'react';
 import { useCompareChart } from '../hooks/useCompareChart';
 import { COMPARE_CATEGORIES, auditActuals, budgetMapped, BUDGET_MAPPED_YEARS } from '../data/auditData';
+import { auditDrilldown } from '../data/auditDrilldown';
 import { fmtValue } from '../utils/format';
+import BudgetChart from './BudgetChart';
 import './CompareChart.css';
 
 const CompareChart = ({ year }) => {
   const [tab, setTab] = useState('category');
   const [tooltip, setTooltip] = useState(null);
+  const [drillCat, setDrillCat] = useState(null);
   const svgRef = useRef(null);
   const hasBudgetData = BUDGET_MAPPED_YEARS.has(year);
   const actuals = auditActuals[year] ?? {};
   const budget = budgetMapped[year] ?? {};
+  const drillData = drillCat ? (auditDrilldown[year]?.[drillCat] ?? null) : null;
 
-  useCompareChart({ svgRef, actuals, budget, mode: tab, setTooltip, year, showBudget: hasBudgetData });
+  const yearDrilldown = auditDrilldown[year];
+  const isDrillable = yearDrilldown ? (cat) => !!yearDrilldown[cat] : null;
+  const onCategoryClick = yearDrilldown
+    ? (cat) => { setTooltip(null); setDrillCat(cat); }
+    : null;
+
+  useCompareChart({ svgRef, actuals, budget, mode: tab, setTooltip, year, showBudget: hasBudgetData, onCategoryClick, isDrillable });
 
   const tooltipDiff = tooltip ? tooltip.actualVal - tooltip.budgetVal : 0;
+
+  if (drillCat && drillData) {
+    return (
+      <BudgetChart
+        data={drillData}
+        title={`${year} ${drillCat} — Expenditures by Fund`}
+        onBack={() => setDrillCat(null)}
+        year={year}
+        hintLine="Click a segment to see details · Scroll to zoom"
+      />
+    );
+  }
 
   return (
     <div className="compare-wrap">
@@ -25,6 +47,7 @@ const CompareChart = ({ year }) => {
         {hasBudgetData
           ? 'Budget figures are approximate — the borough budget uses fund-based categories while the independent audit uses DCED functional categories.'
           : `Detailed borough budget data is not available for ${year}; audited actuals only.`}
+        {onCategoryClick && ' Click a category bar to see the fund breakdown.'}
       </p>
       <div className="compare-tabs">
         <button
