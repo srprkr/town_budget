@@ -21,14 +21,14 @@ const T_H = 210;
 const T_IW = W - T_MAR.left - T_MAR.right;
 const T_IH = T_H - T_MAR.top - T_MAR.bottom;
 
-export function useCompareChart({ svgRef, actuals, budget, mode = 'category', setTooltip, year, showBudget = true, onCategoryClick, isDrillable }) {
+export function useCompareChart({ svgRef, actuals, budget, mode = 'category', setTooltip, year, showBudget = true }) {
   useEffect(() => {
     if (!svgRef.current) return;
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
     if (mode === 'total') drawTotal(svg, actuals, budget, setTooltip, year, showBudget);
-    else drawCategory(svg, actuals, budget, setTooltip, year, showBudget, onCategoryClick, isDrillable);
-  }, [svgRef, actuals, budget, mode, setTooltip, year, showBudget, onCategoryClick, isDrillable]);
+    else drawCategory(svg, actuals, budget, setTooltip, year, showBudget);
+  }, [svgRef, actuals, budget, mode, setTooltip, year, showBudget]);
 }
 
 function makeTooltipHandlers(setTooltip, getData, year) {
@@ -56,7 +56,7 @@ function makeTooltipHandlers(setTooltip, getData, year) {
   };
 }
 
-function drawCategory(svg, actuals, budget, setTooltip, year, showBudget, onCategoryClick, isDrillable) {
+function drawCategory(svg, actuals, budget, setTooltip, year, showBudget) {
   const g = svg.append('g').attr('transform', `translate(${C_MAR.left},${C_MAR.top})`);
 
   const yScale = d3.scaleBand()
@@ -117,15 +117,10 @@ function drawCategory(svg, actuals, budget, setTooltip, year, showBudget, onCate
     .enter().append('g')
     .attr('class', 'bar-group')
     .attr('transform', d => `translate(0,${yScale(d)})`)
-    .style('cursor', d => (isDrillable?.(d) ? 'pointer' : (setTooltip ? 'default' : null)))
+    .style('cursor', setTooltip ? 'default' : null)
     .on('mouseenter', handlers.mouseenter ?? null)
     .on('mousemove', handlers.mousemove ?? null)
     .on('mouseleave', handlers.mouseleave ?? null);
-
-  if (onCategoryClick) {
-    groups.filter(d => isDrillable?.(d) ?? true)
-      .on('click', (event, d) => onCategoryClick(d));
-  }
 
   if (showBudget) {
     groups.append('rect')
