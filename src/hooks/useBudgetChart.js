@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { getTooltipNote } from '../utils/tooltipNotes';
 
 const WIDTH = 900;
 const HEIGHT = 700;
@@ -13,7 +14,6 @@ const ARC_LABEL_MAX = 20;
 
 const EMPTY_DRILL = {};
 
-const BENEFITS_ANOMALY_YEARS = new Set([2022, 2023]);
 
 export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onSegmentClick, onDrillIn, onBack, year }) {
   const drillDownData = drillDownProp ?? EMPTY_DRILL;
@@ -135,10 +135,7 @@ export function useBudgetChart({ svgRef, data, drillDownData: drillDownProp, onS
     }
 
     function tooltipNote(name) {
-      if (name === 'Employee Benefits' && BENEFITS_ANOMALY_YEARS.has(yearRef.current)) {
-        return 'Includes pension fund activity (fiduciary) in the DCED totals, inflating this figure vs. other years.';
-      }
-      return null;
+      return getTooltipNote(name, yearRef.current);
     }
 
     let touchTimer = null;

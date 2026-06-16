@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import * as d3 from 'd3';
 import { fmtValue, fmtAxis } from '../utils/format';
 import { COMPARE_CATEGORIES } from '../data/auditData';
+import { getTooltipNote } from '../utils/tooltipNotes';
 
 const GREEN = '#22c55e';
 const RED = '#ef4444';
@@ -20,17 +21,42 @@ const T_H = 210;
 const T_IW = W - T_MAR.left - T_MAR.right;
 const T_IH = T_H - T_MAR.top - T_MAR.bottom;
 
-export function useCompareChart({ svgRef, actuals, budget, mode = 'category' }) {
+export function useCompareChart({ svgRef, actuals, budget, mode = 'category', setTooltip, year }) {
   useEffect(() => {
     if (!svgRef.current) return;
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
-    if (mode === 'total') drawTotal(svg, actuals, budget);
-    else drawCategory(svg, actuals, budget);
-  }, [svgRef, actuals, budget, mode]);
+    if (mode === 'total') drawTotal(svg, actuals, budget, setTooltip, year);
+    else drawCategory(svg, actuals, budget, setTooltip, year);
+  }, [svgRef, actuals, budget, mode, setTooltip, year]);
 }
 
-function drawCategory(svg, actuals, budget) {
+function makeTooltipHandlers(setTooltip, getData, year) {
+  if (!setTooltip) return {};
+  return {
+    mouseenter(event, d) {
+      const { cat, budgetVal, actualVal } = getData(d);
+      const rect = event.currentTarget.closest('svg').getBoundingClientRect();
+      setTooltip({
+        cat,
+        budgetVal,
+        actualVal,
+        note: getTooltipNote(cat, year),
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      });
+    },
+    mousemove(event) {
+      const rect = event.currentTarget.closest('svg').getBoundingClientRect();
+      setTooltip(p => p ? { ...p, x: event.clientX - rect.left, y: event.clientY - rect.top } : null);
+    },
+    mouseleave() {
+      setTooltip(null);
+    },
+  };
+}
+
+function drawCategory(svg, actuals, budget, setTooltip, year) {
   const g = svg.append('g').attr('transform', `translate(${C_MAR.left},${C_MAR.top})`);
 
   const yScale = d3.scaleBand()
@@ -76,11 +102,21 @@ function drawCategory(svg, actuals, budget) {
       sel.selectAll('text').attr('fill', 'var(--text)').attr('font-size', '12px').attr('dx', '-8');
     });
 
+  const handlers = makeTooltipHandlers(setTooltip, d => ({
+    cat: d,
+    budgetVal: budget[d] ?? 0,
+    actualVal: actuals[d] ?? 0,
+  }), year);
+
   const groups = g.selectAll('.bar-group')
     .data(COMPARE_CATEGORIES)
     .enter().append('g')
     .attr('class', 'bar-group')
-    .attr('transform', d => `translate(0,${yScale(d)})`);
+    .attr('transform', d => `translate(0,${yScale(d)})`)
+    .style('cursor', setTooltip ? 'default' : null)
+    .on('mouseenter', handlers.mouseenter ?? null)
+    .on('mousemove', handlers.mousemove ?? null)
+    .on('mouseleave', handlers.mouseleave ?? null);
 
   groups.append('rect')
     .attr('y', ySubScale('budget'))
@@ -124,7 +160,7 @@ function drawCategory(svg, actuals, budget) {
     .attr('fill', 'var(--text-muted, #888)').attr('font-size', '11px').text('Audited Actual');
 }
 
-function drawTotal(svg, actuals, budget) {
+function drawTotal(svg, actuals, budget, setTooltip, year) {
   const budgetTotal = COMPARE_CATEGORIES.reduce((s, c) => s + (budget[c] ?? 0), 0);
   const actualTotal = COMPARE_CATEGORIES.reduce((s, c) => s + (actuals[c] ?? 0), 0);
   const diff = actualTotal - budgetTotal;
@@ -171,6 +207,12 @@ function drawTotal(svg, actuals, budget) {
     .attr('fill', GREEN).attr('font-size', '13px').attr('font-weight', '600')
     .text('Audited');
 
+  const totalHandlers = makeTooltipHandlers(setTooltip, d => ({
+    cat: d === 'budget' ? 'Budgeted Total' : 'Audited Total',
+    budgetVal: budgetTotal,
+    actualVal: actualTotal,
+  }), year);
+
   // Budget bar
   g.append('rect')
     .attr('y', yScale('budget'))
@@ -178,7 +220,10 @@ function drawTotal(svg, actuals, budget) {
     .attr('height', yScale.bandwidth())
     .attr('fill', 'var(--accent)')
     .attr('opacity', BUDGET_OPACITY)
-    .attr('rx', 3);
+    .attr('rx', 3)
+    .on('mouseenter', totalHandlers.mouseenter ? e => totalHandlers.mouseenter(e, 'budget') : null)
+    .on('mousemove', totalHandlers.mousemove ?? null)
+    .on('mouseleave', totalHandlers.mouseleave ?? null);
 
   // Actual bar
   g.append('rect')
@@ -186,7 +231,10 @@ function drawTotal(svg, actuals, budget) {
     .attr('width', xScale(actualTotal))
     .attr('height', yScale.bandwidth())
     .attr('fill', GREEN)
-    .attr('rx', 3);
+    .attr('rx', 3)
+    .on('mouseenter', totalHandlers.mouseenter ? e => totalHandlers.mouseenter(e, 'actual') : null)
+    .on('mousemove', totalHandlers.mousemove ?? null)
+    .on('mouseleave', totalHandlers.mouseleave ?? null);
 
   // Budget value label
   g.append('text')
