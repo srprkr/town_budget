@@ -254,14 +254,4 @@ function drawTotal(svg, actuals, budget, setTooltip, year) {
     .attr('font-size', '13px')
     .attr('font-weight', '600')
     .text(fmtValue(actualTotal));
-
-  // Difference label below bars
-  g.append('text')
-    .attr('x', T_IW / 2)
-    .attr('y', T_IH + 36)
-    .attr('text-anchor', 'middle')
-    .attr('fill', diff > 0 ? RED : GREEN)
-    .attr('font-size', '13px')
-    .attr('font-weight', '600')
-    .text(`${diff >= 0 ? '+' : ''}${fmtValue(diff)} vs. budget`);
 }
