@@ -9,19 +9,22 @@ describe('TrendChart', () => {
   const values = [null, null, null, null, null, 100, 200, 300, 400, 500];
 
   it('renders the fund and revenue type in the title', () => {
-    render(<TrendChart values={values} fund="General Fund" type="revenue" />);
-    expect(screen.getByText(/General Fund/)).toBeInTheDocument();
-    expect(screen.getByText(/Revenue/)).toBeInTheDocument();
+    const { container } = render(<TrendChart values={values} fund="General Fund" type="revenue" />);
+    const title = container.querySelector('.trend-title');
+    expect(title).toBeInTheDocument();
+    expect(title.textContent).toMatch(/General Fund.*Revenue/);
   });
 
   it('renders expenditures label for expenditure type', () => {
-    render(<TrendChart values={values} fund="Sewer Fund" type="expenditure" />);
-    expect(screen.getByText(/Expenditures/)).toBeInTheDocument();
+    const { container } = render(<TrendChart values={values} fund="Sewer Fund" type="expenditure" />);
+    const title = container.querySelector('.trend-title');
+    expect(title.textContent).toMatch(/Sewer Fund.*Expenditures/);
   });
 
   it('renders Surplus / Deficit label for balance type', () => {
-    render(<TrendChart values={values} fund="General Fund" type="balance" />);
-    expect(screen.getByText(/Surplus \/ Deficit/)).toBeInTheDocument();
+    const { container } = render(<TrendChart values={values} fund="General Fund" type="balance" />);
+    const title = container.querySelector('.trend-title');
+    expect(title.textContent).toMatch(/Surplus \/ Deficit/);
   });
 
   it('renders the zoom hint', () => {
