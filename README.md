@@ -2,7 +2,10 @@
 
 - [ x ] Better animations for the drill downs
 - [ x ] Light/Dark theme toggle (paper theme optional)
-- [ x ] Add remaining years (2015 - 2026)
+- [ x ] Add budget projection remaining years (2015 - 2026)
+- [ x ] Add audit years (2015 - 2026)
+- [ x ] Audit comparison chart
+- [ x ] Better UI around navigation/readability.
 - [ x ] Better UI around navigation/readability.
   - [ x ] Totals in the middle.
   - [ x ] Click center to go back "up" the tree
